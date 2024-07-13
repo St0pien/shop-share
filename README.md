@@ -1,29 +1,42 @@
-# Create T3 App
+<div align=center>
+    <img src="./assets/img/Logo.png" />
+</div>
+<h2 align-center>Share shopping lists with your friends family and roommates</h2>
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+<div align=center>
 
-## What's next? How do I make an app with this?
+[![React](https://img.shields.io/badge/React-20232a?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Drizzle](https://img.shields.io/badge/Drizzle-00D9A1?style=for-the-badge&logo=drizzle&logoColor=white)](https://github.com/drizzle-team/drizzle-orm)
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+</div>
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Features
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- Create spaces to share shop items and shopping lists with other users
+- Search filter functions for shopping lists items and users
 
-## Learn More
+### Initial design
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+<div align=center>
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+![](./assets/img/Login%20page.png)
+![](./assets/img/Home%20page.png)
+![](./assets/img/Lists%20page.png)
+![](./assets/img/Items%20page.png)
+![](./assets/img/Categories%20page.png)
+![](./assets/img/Manage%20page.png)
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+</div>
 
-## How do I deploy this?
+## Tech Stack
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- **Framework:** [T3 Stack](https://create.t3.gg/)
+  - Next.js
+  - TypeScript
+  - Tailwind CSS
+  - TRPC
+- **Authentication:** [Auth.js](https://authjs.dev/)
+- **Database:** PostgreSQL
+- **SQL query builder | ORM | Migrations**: [Drizzle](https://orm.drizzle.team/)
+- **UI Components:** [shadcn/ui](https://ui.shadcn.dev/)
