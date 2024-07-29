@@ -1,13 +1,18 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
 
 import { GoogleLogo } from '@/components/svg/GoogleLogo';
 import { Button } from '@/components/ui/button';
 
 export function GoogleOauthButton() {
+  const searchParams = useSearchParams();
+
   const login = async () => {
-    await signIn('google');
+    const callbackUrl = searchParams.get('callbackUrl') ?? '/';
+
+    await signIn('google', { callbackUrl });
   };
 
   return (

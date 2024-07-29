@@ -6,7 +6,7 @@ import { GeistMono } from 'geist/font/mono';
 import { TRPCReactProvider } from '@/trpc/react';
 import { cn } from '@/lib/utils';
 
-import { ThemeProvider } from './ThemeProvider';
+import { ThemeProvider } from './_components/ThemeProvider';
 
 export const metadata: Metadata = {
   title: 'ShopShare',
@@ -25,11 +25,7 @@ export default function RootLayout({
     >
       <body>
         <TRPCReactProvider>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
-            enableSystem
-          >
+          <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
             {children}
           </ThemeProvider>
         </TRPCReactProvider>

@@ -1,8 +1,10 @@
 import dynamic from 'next/dynamic';
+import { redirect } from 'next/navigation';
 
 import { Logo } from '@/components/Logo';
+import { auth } from '@/server/auth';
 
-import { GoogleOauthButton } from './GoogleOauthButton';
+import { GoogleOauthButton } from './_components/GoogleOauthButton';
 
 const DynamicThemeSwitch = dynamic(
   () => import('@/components/ThemeSwitch').then(mod => mod.ThemeSwitch),
@@ -12,6 +14,12 @@ const DynamicThemeSwitch = dynamic(
 );
 
 export default async function LoginPage() {
+  const session = await auth();
+
+  if (session !== null) {
+    redirect('/');
+  }
+
   return (
     <div className='h-screen w-screen'>
       <div className='flex h-2/5 w-full flex-col items-center justify-end'>

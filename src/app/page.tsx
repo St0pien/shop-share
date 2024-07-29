@@ -2,11 +2,14 @@ import Image from 'next/image';
 
 import { auth } from '@/server/auth';
 
+import { SignOutButton } from './_components/SignOutButton';
+
 export default async function HomePage() {
   const session = (await auth())!;
 
-  console.log('hello from page');
-  console.log(session);
+  if (!session) {
+    return <h1>oop</h1>;
+  }
 
   return (
     <div>
@@ -19,6 +22,7 @@ export default async function HomePage() {
         width={200}
         height={200}
       />
+      <SignOutButton />
     </div>
   );
 }
