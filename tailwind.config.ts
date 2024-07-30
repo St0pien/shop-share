@@ -53,7 +53,8 @@ const config = {
           foreground: 'hsl(var(--card-foreground))'
         },
         neutral: {
-          dark: 'hsl(var(--dark-neutral))'
+          dark: 'hsl(var(--dark-neutral))',
+          medium: 'hsl(var(--medium-neutral))'
         }
       },
       borderRadius: {
@@ -85,4 +86,3 @@ const config = {
 } satisfies Config;
 
 export default config;
-

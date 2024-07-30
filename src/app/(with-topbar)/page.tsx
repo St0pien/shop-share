@@ -1,8 +1,7 @@
 import Image from 'next/image';
 
 import { auth } from '@/server/auth';
-
-import { SignOutButton } from './_components/SignOutButton';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 
 export default async function HomePage() {
   const session = (await auth())!;
