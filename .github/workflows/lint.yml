@@ -1,0 +1,29 @@
+---
+name: Lint
+"on": push
+permissions:
+  checks: write
+  contents: write
+jobs:
+  run-linters:
+    name: Linter + formatter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git Repository
+        uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          eslint: true
+          prettier: true
+          eslint_extensions: "html,js,jsx,ts,tsx"
+          prettier_extensions: "css,html,js,jsx,ts,tsx"
