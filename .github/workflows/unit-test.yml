@@ -1,11 +1,11 @@
 ---
-name: Lint
+name: Unit tests
 "on": push
 permissions:
   checks: write
 jobs:
-  run-linters:
-    name: Linter + formatter
+  run-unit-tests:
+    name: Run vitest unit tests
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git Repository
@@ -19,10 +19,5 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
-      - name: Run linters
-        uses: wearerequired/lint-action@v2
-        with:
-          eslint: true
-          prettier: true
-          eslint_extensions: "html,js,jsx,ts,tsx"
-          prettier_extensions: "css,html,js,jsx,ts,tsx"
+      - name: Run vitest
+        run: pnpm test:unit
