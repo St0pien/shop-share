@@ -43,6 +43,7 @@ export function SearchBar() {
       />
       {searchText !== '' && (
         <X
+          role='button'
           onClick={clearSearch}
           className='absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground'
         />
