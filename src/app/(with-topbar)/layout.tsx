@@ -1,5 +1,5 @@
-import { Avatar } from './[space]/_components/Avatar';
-import { SearchBar } from './[space]/_components/SearchBar';
+import { Avatar } from "./_components/Avatar";
+import { SearchBar } from "./_components/SearchBar";
 
 export default function TopBarLayout({
   children
