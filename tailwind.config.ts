@@ -54,7 +54,8 @@ const config = {
         },
         neutral: {
           dark: 'hsl(var(--dark-neutral))',
-          medium: 'hsl(var(--medium-neutral))'
+          medium: 'hsl(var(--medium-neutral))',
+          light: 'hsl(var(--light-neutral))'
         }
       },
       borderRadius: {

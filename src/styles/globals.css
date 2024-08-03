@@ -26,6 +26,7 @@
     --radius: 0.5rem;
     --dark-neutral: 0 0 98%;
     --medium-neutral: 0 0 95%;
+    --light-neutral: 0 0 78%;
   }
 
   .dark {
@@ -50,6 +51,7 @@
     --ring: 35.5 91.7% 32.9%;
     --dark-neutral: 0 0 7%;
     --medium-neutral: 0 0 13%;
+    --light-neutral: 0 0 40%;
   }
 }
 
