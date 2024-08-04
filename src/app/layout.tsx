@@ -5,6 +5,7 @@ import { GeistMono } from 'geist/font/mono';
 
 import { TRPCReactProvider } from '@/trpc/react';
 import { cn } from '@/lib/utils';
+import { Toaster } from '@/components/ui/sonner';
 
 import { ThemeProvider } from './_components/ThemeProvider';
 
@@ -27,6 +28,7 @@ export default function RootLayout({
         <TRPCReactProvider>
           <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
             {children}
+            <Toaster richColors />
           </ThemeProvider>
         </TRPCReactProvider>
       </body>

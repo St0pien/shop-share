@@ -19,11 +19,13 @@ export const spaces = createTable('space', {
   name: varchar('name', { length: 255 }).notNull(),
   admin: varchar('admin', { length: 255 })
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   createdAt: timestamp('created_at', {
     mode: 'date',
     withTimezone: true
-  }).default(sql`CURRENT_TIMESTAMP`)
+  })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull()
 });
 
 export const spaceMembers = createTable(
@@ -31,10 +33,10 @@ export const spaceMembers = createTable(
   {
     userId: varchar('user_id', { length: 255 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
     spaceId: varchar('space_id', { length: 255 })
       .notNull()
-      .references(() => spaces.id)
+      .references(() => spaces.id, { onDelete: 'cascade', onUpdate: 'cascade' })
   },
   table => ({
     pk: primaryKey({ columns: [table.userId, table.spaceId] })
@@ -46,7 +48,7 @@ export const categories = createTable('category', {
   name: varchar('name', { length: 255 }).notNull(),
   spaceId: varchar('space_id', { length: 255 })
     .notNull()
-    .references(() => spaces.id),
+    .references(() => spaces.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   createdAt: timestamp('created_at', {
     mode: 'date',
     withTimezone: true
@@ -58,7 +60,7 @@ export const items = createTable('item', {
   name: varchar('name', { length: 255 }).notNull(),
   spaceId: varchar('space_id', { length: 255 })
     .notNull()
-    .references(() => spaces.id),
+    .references(() => spaces.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
 
   createdAt: timestamp('created_at', {
     mode: 'date',
@@ -71,7 +73,7 @@ export const lists = createTable('list', {
   name: varchar('name', { length: 255 }).notNull(),
   spaceId: varchar('space_id', { length: 255 })
     .notNull()
-    .references(() => spaces.id),
+    .references(() => spaces.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   createdAt: timestamp('created_at', {
     mode: 'date',
     withTimezone: true
@@ -79,7 +81,13 @@ export const lists = createTable('list', {
 });
 
 export const listItems = createTable('list_item', {
-  listId: integer('list_id').references(() => lists.id),
-  itemId: integer('item_id').references(() => items.id),
+  listId: integer('list_id').references(() => lists.id, {
+    onDelete: 'cascade',
+    onUpdate: 'cascade'
+  }),
+  itemId: integer('item_id').references(() => items.id, {
+    onDelete: 'cascade',
+    onUpdate: 'cascade'
+  }),
   checked: boolean('checked').notNull().default(false)
 });

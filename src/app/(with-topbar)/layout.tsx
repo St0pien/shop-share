@@ -12,7 +12,7 @@ export default function TopBarLayout({
         </div>
         <SearchBar />
       </div>
-      <div className='w-full overflow-hidden'>{children}</div>
+      <div className='w-full overflow-y-auto'>{children}</div>
     </div>
   );
 }
