@@ -18,7 +18,7 @@ export const shoppingRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      await ctx.db.transaction(async tx => {
+      const spaceId = await ctx.db.transaction(async tx => {
         const result = await tx
           .insert(spaces)
           .values({
@@ -41,7 +41,11 @@ export const shoppingRouter = createTRPCRouter({
           userId: ctx.session.user.id,
           spaceId
         });
+
+        return spaceId;
       });
+
+      return spaceId;
     }),
 
   fetchSpaces: protectedProcedure.query(async ({ ctx }) => {
