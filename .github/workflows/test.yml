@@ -1,0 +1,58 @@
+---
+name: Tests
+"on": push
+permissions:
+  checks: write
+env:
+  DATABASE_URL: postgresql://postgres:root@localhost:5432/shopshare
+  NEXTAUTH_URL: 'http://localhost:3000'
+  AUTH_GOOGLE_ID: 'asdf'
+  AUTH_GOOGLE_SECRET: 'asdf'
+jobs:
+  run-unit-tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git Repository
+        uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run unit tests
+        run: pnpm test:unit
+  run-integration-tests:
+    name: Run integration tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: shopshare
+          POSTGRES_USER: postgres
+        options: --health-cmd pg_isready  --health-interval 10s --health-timeout
+          5s --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - name: Check out Git Repository
+        uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Migrate db
+        run: pnpm db:push
+      - name: Run integration tests
+        run: pnpm test:integration

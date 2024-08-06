@@ -2,7 +2,7 @@ import { LayoutGrid, ListChecks, ShoppingCart, Users } from 'lucide-react';
 
 import { DeleteButton } from '@/components/buttons/DeleteButton';
 import { ShareButton } from '@/components/buttons/ShareButton';
-import { SpaceInfo } from '@/lib/types';
+import { type SpaceInfo } from '@/lib/types';
 
 interface SpaceCardProps {
   spaceInfo: SpaceInfo;

@@ -1,4 +1,3 @@
-
 export interface SpaceInfo {
   id: string;
   name: string;
@@ -8,4 +7,3 @@ export interface SpaceInfo {
   categoriesQuantity: number;
   membersQuantity: number;
 }
-

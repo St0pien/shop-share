@@ -11,7 +11,6 @@ import {
 } from '@/server/db/schema';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-import { setSelectionPerMouseDown } from '@testing-library/user-event/dist/cjs/event/index.js';
 
 export const shoppingRouter = createTRPCRouter({
   create: protectedProcedure
@@ -46,7 +45,7 @@ export const shoppingRouter = createTRPCRouter({
     }),
 
   fetchSpaces: protectedProcedure.query(async ({ ctx }) => {
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     const rows = await ctx.db
       .select({

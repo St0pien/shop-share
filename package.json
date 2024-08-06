@@ -13,7 +13,9 @@
     "lint": "next lint",
     "format": "prettier -w src/* drizzle.config.ts tailwind.config.ts",
     "start": "next start",
-    "test:unit": "vitest"
+    "test:unit": "vitest --project unit",
+    "test:integration": "vitest --project integration",
+    "test": "vitest"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.1.0",
@@ -60,6 +62,7 @@
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
     "@vitejs/plugin-react": "^4.3.1",
+    "dotenv": "^16.4.5",
     "drizzle-kit": "^0.21.4",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.4",
