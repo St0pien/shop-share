@@ -6,6 +6,7 @@ import { type ChangeEventHandler, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Input } from '@/components/ui/input';
+import { SEARCH_DEBOUNCE } from '@/lib/const';
 
 export function SearchBar() {
   const pathname = usePathname();
@@ -19,7 +20,7 @@ export function SearchBar() {
   const updateSearchParams = useDebouncedCallback(text => {
     const urlSuffix = text === '' ? '' : `?search=${text}`;
     router.replace(pathname + urlSuffix);
-  }, 200);
+  }, SEARCH_DEBOUNCE);
 
   const handleSearch: ChangeEventHandler<HTMLInputElement> = e => {
     setSearchText(e.target.value);
