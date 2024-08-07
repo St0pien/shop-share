@@ -1,24 +1,26 @@
 import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
 
 import { auth } from '@/server/auth';
 import { api, HydrateClient } from '@/trpc/server';
+import { Spinner } from '@/components/svg/Spinner';
 
 import { AddSpaceDialog } from './_components/AddSpaceDialog';
 import { SpaceCardList } from './_components/SpaceCardList';
 
 export default async function HomePage() {
-  const session = (await auth())!;
+  const session = await auth();
 
   if (!session) {
-    return <h1>Not authenticated</h1>;
+    redirect('/login');
   }
 
-  void api.shopping.fetchSpaces.prefetch();
+  void api.spaces.fetch.prefetch();
 
   return (
     <HydrateClient>
       <div className='flex w-full flex-col items-center gap-8'>
-        <Suspense fallback={<h1>Loading</h1>}>
+        <Suspense fallback={<Spinner className='w-20 h-20' />}>
           <SpaceCardList />
         </Suspense>
       </div>

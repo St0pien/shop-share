@@ -5,7 +5,7 @@ import { api } from '@/trpc/react';
 import { SpaceCard } from './SpaceCard';
 
 export function SpaceCardList() {
-  const [spaces] = api.shopping.fetchSpaces.useSuspenseQuery();
+  const [spaces ] = api.spaces.fetch.useSuspenseQuery();
 
   return (
     <>
