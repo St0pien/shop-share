@@ -22,7 +22,7 @@ describe('Spaces', () => {
     test('creates space record', async () => {
       const spaceName = 'Space @!#(*$!@) ??? "// l.....,.';
 
-      await api.shopping.create(spaceName);
+      await api.spaces.create(spaceName);
 
       const records = await db
         .select()
@@ -38,7 +38,7 @@ describe('Spaces', () => {
     test('adds creator to members', async () => {
       const spaceName = 'Space members test';
 
-      const id = await api.shopping.create(spaceName);
+      const id = await api.spaces.create(spaceName);
 
       const members = await db
         .select()
@@ -50,5 +50,60 @@ describe('Spaces', () => {
         userId: fakeUser.id
       });
     });
+  });
+
+  describe('fetch', () => {
+    test('returns all spaces on empty search', async () => {
+      const names = [
+        'Space uno',
+        'Space duo',
+        'Space tre',
+        'Space quatro',
+        'Test test'
+      ];
+
+      await Promise.all(names.map(api.spaces.create));
+
+      const result = await api.spaces.fetch();
+
+      names.forEach(name => {
+        expect(result.map(r => r.name)).toContain(name);
+      });
+    });
+
+    test('correctly returns partially matched search', async () => {
+      const names = [
+        'Space of things',
+        'Ace of spades',
+        'Thin guy',
+        'Thinking about spaces',
+        'this is sparta'
+      ];
+
+      await Promise.all(names.map(api.spaces.create));
+
+      const thinSearch = await api.spaces.fetch({ search: 'thin' });
+      const thinSearchNames = thinSearch.map(r => r.name);
+
+      [0, 2, 3].forEach(i => {
+        expect(thinSearchNames).toContain(names[i]);
+      });
+
+      [1, 4].forEach(i => {
+        expect(thinSearchNames).not.toContain(names[i]);
+      });
+
+      const thisSearch = await api.spaces.fetch({ search: 'this' });
+      const thisSearchNames = thisSearch.map(r => r.name);
+
+      [0, 3, 4].forEach(i => {
+        expect(thisSearchNames).toContain(names[i]);
+      });
+
+      [1, 2].forEach(i => {
+        expect(thisSearchNames).not.toContain(names[i]);
+      });
+    });
+
   });
 });
