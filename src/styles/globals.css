@@ -26,10 +26,11 @@
     --radius: 0.5rem;
     --dark-neutral: 0 0 98%;
     --medium-neutral: 0 0 95%;
+    --light-neutral: 0 0 78%;
   }
 
   .dark {
-    --background: 20 14.3% 4.1%;
+    --background: 0 0 0%;
     --foreground: 60 9.1% 97.8%;
     --card: 20 14.3% 4.1%;
     --card-foreground: 60 9.1% 97.8%;
@@ -37,7 +38,7 @@
     --popover-foreground: 60 9.1% 97.8%;
     --primary: 47.9 95.8% 53.1%;
     --primary-foreground: 26 83.3% 14.1%;
-    --secondary: 12 6.5% 15.1%;
+    --secondary: 0 0 15.1%;
     --secondary-foreground: 60 9.1% 97.8%;
     --muted: 12 6.5% 15.1%;
     --muted-foreground: 24 5.4% 63.9%;
@@ -50,6 +51,7 @@
     --ring: 35.5 91.7% 32.9%;
     --dark-neutral: 0 0 7%;
     --medium-neutral: 0 0 13%;
+    --light-neutral: 0 0 40%;
   }
 }
 
@@ -59,5 +61,18 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .spinner_P7sC {
+    transform-origin: center;
+    animation: spinner_svv2 0.5s infinite linear;
+  }
+
+  @keyframes spinner_svv2 {
+    100% {
+      transform: rotate(360deg);
+    }
   }
 }

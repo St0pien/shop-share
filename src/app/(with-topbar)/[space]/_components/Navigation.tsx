@@ -28,7 +28,7 @@ const routes = [
 
 export function Navigation() {
   return (
-    <div className='flex items-center justify-between bg-neutral-dark px-2'>
+    <div className='flex h-full items-center justify-between bg-neutral-dark px-2'>
       {routes.map(({ path, title, icon: Icon }) => (
         <div key={path} className='flex flex-col items-center'>
           <Icon className='h-8 w-8' />

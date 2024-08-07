@@ -1,27 +1,36 @@
-import Image from 'next/image';
+import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
 
 import { auth } from '@/server/auth';
-import { SignOutButton } from '@/components/auth/SignOutButton';
+import { api, HydrateClient } from '@/trpc/server';
+import { Spinner } from '@/components/svg/Spinner';
 
-export default async function HomePage() {
-  const session = (await auth())!;
+import { AddSpaceDialog } from './_components/AddSpaceDialog';
+import { SpaceCardList } from './_components/SpaceCardList';
+
+export default async function HomePage({
+  searchParams
+}: {
+  searchParams: { search?: string };
+}) {
+  const session = await auth();
 
   if (!session) {
-    return <h1>oop</h1>;
+    redirect('/login');
   }
 
+  void api.spaces.fetch.prefetch({ search: searchParams.search });
+
   return (
-    <div>
-      <h1>{session.user.name}</h1>
-      <h2>{session.user.email}</h2>
-      <a href={session.user.image ?? ''}>Image</a>
-      <Image
-        src={session.user.image ?? ''}
-        alt={session.user.id}
-        width={200}
-        height={200}
-      />
-      <SignOutButton />
-    </div>
+    <HydrateClient>
+      <div className='flex w-full flex-col items-center gap-8'>
+        <Suspense key={searchParams.search} fallback={<Spinner className='h-20 w-20' />}>
+          <SpaceCardList search={searchParams.search} />
+        </Suspense>
+      </div>
+      <div className='fixed bottom-32 right-8'>
+        <AddSpaceDialog />
+      </div>
+    </HydrateClient>
   );
 }
