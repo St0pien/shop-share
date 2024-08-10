@@ -10,12 +10,11 @@ import {
   SelectValue
 } from '@/components/ui/select';
 
-const orderKeys = {
-  'a-z': 'A-Z',
-  latest: 'Latest'
-};
+interface Props {
+  orderKeys: Record<string, string>;
+}
 
-export function SpaceOrderBy() {
+export function OrderSelect({ orderKeys }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -42,7 +41,6 @@ export function SpaceOrderBy() {
               {name}
             </SelectItem>
           ))}
-          <SelectItem value='test'>Test 1</SelectItem>
         </SelectContent>
       </Select>
     </div>

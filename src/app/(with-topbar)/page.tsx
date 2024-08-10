@@ -4,10 +4,10 @@ import { Suspense } from 'react';
 import { auth } from '@/server/auth';
 import { api, HydrateClient } from '@/trpc/server';
 import { Spinner } from '@/components/svg/Spinner';
+import { OrderSelect } from '@/components/filtering/OrderSelect';
 
 import { AddSpaceDialog } from './_components/AddSpaceDialog';
 import { SpaceCardList } from './_components/SpaceCardList';
-import { SpaceOrderBy } from './_components/SpaceOrderBy';
 
 function SpinnerFallback() {
   return (
@@ -16,6 +16,11 @@ function SpinnerFallback() {
     </div>
   );
 }
+
+const orderByMap = {
+  'a-z': 'A-Z',
+  'z-a': 'Z-A'
+};
 
 export default async function HomePage({
   searchParams
@@ -35,7 +40,7 @@ export default async function HomePage({
       <div className='grid h-full w-full grid-rows-[min-content_1fr]'>
         <div className='flex w-full justify-end border-b-white px-[8%] pb-4 pt-2'>
           <div className='w-40'>
-            <SpaceOrderBy />
+            <OrderSelect orderKeys={orderByMap} />
           </div>
         </div>
 
