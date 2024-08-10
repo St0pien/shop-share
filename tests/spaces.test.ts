@@ -104,6 +104,5 @@ describe('Spaces', () => {
         expect(thisSearchNames).not.toContain(names[i]);
       });
     });
-
   });
 });

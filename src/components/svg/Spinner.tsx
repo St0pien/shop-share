@@ -1,7 +1,8 @@
-import { cn } from '@/lib/utils';
-import React, { SVGProps } from 'react';
+import React, { type SVGProps } from 'react';
 
-export function Spinner({ className, ...props}: SVGProps<SVGSVGElement>) {
+import { cn } from '@/lib/utils';
+
+export function Spinner({ className, ...props }: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'

@@ -17,9 +17,22 @@ export function SearchBar() {
     searchParams.get('search') ?? ''
   );
 
-  const updateSearchParams = useDebouncedCallback(text => {
-    const urlSuffix = text === '' ? '' : `?search=${text}`;
-    router.replace(pathname + urlSuffix);
+  const updateSearchParams = useDebouncedCallback((text: string) => {
+    let url = pathname;
+
+    const newParams = new URLSearchParams(searchParams);
+
+    if (text === '') {
+      newParams.delete('search');
+    } else {
+      newParams.set('search', text);
+    }
+
+    if (newParams.size > 0) {
+      url += `?${newParams.toString()}`;
+    }
+
+    router.replace(url);
   }, SEARCH_DEBOUNCE);
 
   const handleSearch: ChangeEventHandler<HTMLInputElement> = e => {
@@ -29,8 +42,14 @@ export function SearchBar() {
 
   const clearSearch = () => {
     setSearchText('');
+    const newParams = new URLSearchParams(searchParams);
+
+    newParams.delete('search');
+
     // Replace directly to bypass debouncing (clearing should be immediate)
-    router.replace(`${pathname}`);
+    router.replace(
+      newParams.size > 0 ? `${pathname}?${newParams.toString()}` : pathname
+    );
   };
 
   return (

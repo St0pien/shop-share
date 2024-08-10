@@ -68,4 +68,30 @@ describe('SearchBar', () => {
 
     expect(fakeNav.url.searchParams.toString()).toEqual('');
   });
+
+  test('preserves other url query params', async () => {
+    const fakeNav = startFakeNav();
+    fakeNav.url.searchParams.set('order', 'latest');
+    fakeNav.url.searchParams.set('testparam', 'something');
+
+    const searchInput = await prepareSearchBar();
+
+    const user = userEvent.setup();
+
+    await user.click(searchInput);
+    await user.keyboard('test');
+
+    await vi.waitFor(() => {
+      expect(fakeNav.url.searchParams.get('search')).toEqual('test');
+    });
+
+    expect(fakeNav.url.searchParams.get('order')).toEqual('latest');
+    expect(fakeNav.url.searchParams.get('testparam')).toEqual('something');
+
+    await user.click(screen.getByRole('button'));
+
+    expect(fakeNav.url.searchParams.get('search')).toBeNull();
+    expect(fakeNav.url.searchParams.get('order')).toEqual('latest');
+    expect(fakeNav.url.searchParams.get('testparam')).toEqual('something');
+  });
 });

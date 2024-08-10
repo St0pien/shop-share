@@ -33,7 +33,7 @@ export default async function HomePage({
   return (
     <HydrateClient>
       <div className='grid h-full w-full grid-rows-[min-content_1fr]'>
-        <div className='flex w-full justify-end px-[8%] pb-4 pt-2 border-b-white'>
+        <div className='flex w-full justify-end border-b-white px-[8%] pb-4 pt-2'>
           <div className='w-40'>
             <SpaceOrderBy />
           </div>

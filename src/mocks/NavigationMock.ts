@@ -18,6 +18,8 @@ class NavigationMock {
   get router(): AppRouterInstance {
     return {
       replace: (path: string) => {
+        console.log(path);
+
         this.url = new URL(`${this._base}${path}`);
       }
     } as AppRouterInstance;
