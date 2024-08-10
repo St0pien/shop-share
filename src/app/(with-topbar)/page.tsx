@@ -1,5 +1,5 @@
-import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 
 import { auth } from '@/server/auth';
 import { api, HydrateClient } from '@/trpc/server';
@@ -7,6 +7,15 @@ import { Spinner } from '@/components/svg/Spinner';
 
 import { AddSpaceDialog } from './_components/AddSpaceDialog';
 import { SpaceCardList } from './_components/SpaceCardList';
+import { SpaceOrderBy } from './_components/SpaceOrderBy';
+
+function SpinnerFallback() {
+  return (
+    <div className='flex w-full justify-center pt-10'>
+      <Spinner className='h-20 w-20' />
+    </div>
+  );
+}
 
 export default async function HomePage({
   searchParams
@@ -23,10 +32,18 @@ export default async function HomePage({
 
   return (
     <HydrateClient>
-      <div className='flex w-full flex-col items-center gap-8'>
-        <Suspense key={searchParams.search} fallback={<Spinner className='h-20 w-20' />}>
-          <SpaceCardList search={searchParams.search} />
-        </Suspense>
+      <div className='grid h-full w-full grid-rows-[min-content_1fr]'>
+        <div className='flex w-full justify-end px-[8%] pb-4 pt-2 border-b-white'>
+          <div className='w-40'>
+            <SpaceOrderBy />
+          </div>
+        </div>
+
+        <div className='h-full w-full overflow-y-auto'>
+          <Suspense key={searchParams.search} fallback={<SpinnerFallback />}>
+            <SpaceCardList search={searchParams.search} />
+          </Suspense>
+        </div>
       </div>
       <div className='fixed bottom-32 right-8'>
         <AddSpaceDialog />
