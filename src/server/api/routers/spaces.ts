@@ -108,5 +108,24 @@ export const spacesRouter = createTRPCRouter({
       const order = input?.order ?? 'alpha-asc';
 
       return rows.orderBy(orderClause[order]);
+    }),
+  delete: protectedProcedure
+    .input(z.string().uuid())
+    .mutation(async ({ ctx, input: spaceId }) => {
+      const [deletedSpace] = await ctx.db
+        .delete(spaces)
+        .where(
+          and(eq(spaces.id, spaceId), eq(spaces.admin, ctx.session.user.id))
+        )
+        .returning();
+
+      if (deletedSpace === undefined) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Could not found space with provided id'
+        });
+      }
+
+      return deletedSpace;
     })
 });

@@ -39,7 +39,7 @@ export function AddSpaceDialog() {
   const utils = api.useUtils();
 
   const { mutate: createSpace, isPending } = api.spaces.create.useMutation({
-    onSuccess: async () => {
+    onSuccess: () => {
       setIsOpen(false);
       createSpaceForm.setValue('name', '');
       void utils.spaces.fetch.invalidate();
@@ -69,7 +69,7 @@ export function AddSpaceDialog() {
         <AddTrigger />
         <DialogContent className='top-1/3 w-4/5 rounded-xl outline-none'>
           <DialogHeader>
-            <DialogTitle className='font text-2xl font-bold'>
+            <DialogTitle className='text-2xl font-bold'>
               Create shopping space
             </DialogTitle>
             <DialogDescription className='text-sm text-neutral-light'>
