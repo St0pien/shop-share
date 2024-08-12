@@ -59,7 +59,6 @@ export default async function HomePage({
   }
 
   const order = orderMap.find(o => o.url === searchParams.order)?.param;
-  console.log(order);
 
   void api.spaces.fetch.prefetch({
     search: searchParams.search,

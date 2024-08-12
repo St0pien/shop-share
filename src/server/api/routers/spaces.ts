@@ -10,24 +10,14 @@ import {
   spaceMembers,
   spaces
 } from '@/server/db/schema';
-import { wait } from '@/lib/utils';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { Order } from '../schema';
-
-const orderClause: Record<Order, SQL | PgColumn> = {
-  'alpha-asc': spaces.name,
-  'alpha-desc': desc(spaces.name),
-  latest: desc(spaces.createdAt),
-  oldest: spaces.createdAt
-};
 
 export const spacesRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.string())
     .mutation(async ({ input, ctx }) => {
-      await wait(1000);
-
       const spaceId = await ctx.db.transaction(async tx => {
         const result = await tx
           .insert(spaces)
@@ -68,9 +58,6 @@ export const spacesRouter = createTRPCRouter({
         .optional()
     )
     .query(async ({ ctx, input }) => {
-      console.log('yea', input);
-      await wait(1000);
-
       let searchFilter = undefined;
 
       if (input?.search) {
@@ -112,6 +99,13 @@ export const spacesRouter = createTRPCRouter({
         .having(searchFilter);
 
       const order = input?.order ?? 'alpha-asc';
+
+      const orderClause: Record<Order, SQL | PgColumn> = {
+        'alpha-asc': spaces.name,
+        'alpha-desc': desc(spaces.name),
+        latest: desc(spaces.createdAt),
+        oldest: spaces.createdAt
+      };
 
       return rows.orderBy(orderClause[order]);
     })
