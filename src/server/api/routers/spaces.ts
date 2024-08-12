@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { and, count, eq, exists, ilike } from 'drizzle-orm';
+import { and, count, desc, eq, exists, ilike, type SQL } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
+import { type PgColumn } from 'drizzle-orm/pg-core';
 
 import {
   categories,
@@ -12,6 +13,14 @@ import {
 import { wait } from '@/lib/utils';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { Order } from '../schema';
+
+const orderClause: Record<Order, SQL | PgColumn> = {
+  'alpha-asc': spaces.name,
+  'alpha-desc': desc(spaces.name),
+  latest: desc(spaces.createdAt),
+  oldest: spaces.createdAt
+};
 
 export const spacesRouter = createTRPCRouter({
   create: protectedProcedure
@@ -53,11 +62,13 @@ export const spacesRouter = createTRPCRouter({
     .input(
       z
         .object({
-          search: z.string().optional()
+          search: z.string().optional(),
+          order: Order.optional()
         })
         .optional()
     )
     .query(async ({ ctx, input }) => {
+      console.log('yea', input);
       await wait(1000);
 
       let searchFilter = undefined;
@@ -69,7 +80,7 @@ export const spacesRouter = createTRPCRouter({
         );
       }
 
-      const rows = await ctx.db
+      const rows = ctx.db
         .select({
           id: spaces.id,
           name: spaces.name,
@@ -100,6 +111,8 @@ export const spacesRouter = createTRPCRouter({
         .groupBy(spaces.id)
         .having(searchFilter);
 
-      return rows;
+      const order = input?.order ?? 'alpha-asc';
+
+      return rows.orderBy(orderClause[order]);
     })
 });

@@ -1,12 +1,20 @@
 'use client';
 
 import { api } from '@/trpc/react';
+import { type Order } from '@/server/api/schema';
 
 import { SpaceCard } from './SpaceCard';
 
-export function SpaceCardList({ search }: { search?: string }) {
+export function SpaceCardList({
+  search,
+  order
+}: {
+  search?: string;
+  order?: Order;
+}) {
   const [spaces] = api.spaces.fetch.useSuspenseQuery({
-    search
+    search,
+    order
   });
 
   return (

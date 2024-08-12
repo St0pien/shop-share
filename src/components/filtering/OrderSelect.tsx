@@ -10,35 +10,56 @@ import {
   SelectValue
 } from '@/components/ui/select';
 
-interface Props {
-  orderKeys: Record<string, string>;
+import { Label } from '../ui/label';
+
+interface OrderSelectItem {
+  url: string;
+  display: string;
 }
 
-export function OrderSelect({ orderKeys }: Props) {
+interface Props {
+  orderSelectItems: OrderSelectItem[];
+}
+
+export function OrderSelect({ orderSelectItems }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
   const onSwitch = (value: string) => {
     const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('order', value);
+
+    const url = orderSelectItems.find(i => i.display === value)?.url;
+
+    if (url === '' || url === undefined) {
+      newSearchParams.delete('order');
+    } else {
+      newSearchParams.set('order', url);
+    }
 
     router.replace(`${pathname}?${newSearchParams.toString()}`);
   };
 
-  const selectedOption = searchParams.get('order') ?? Object.keys(orderKeys)[0];
+  const orderParam = searchParams.get('order') ?? '';
+
+  const selectedOption = orderSelectItems.find(
+    i => i.url === orderParam
+  )?.display;
 
   return (
     <div className='flex w-full items-center gap-2'>
-      <p className='text-neutral-light'>Order:</p>
+      <Label className='text-neutral-light'>Order:</Label>
       <Select defaultValue={selectedOption} onValueChange={onSwitch}>
-        <SelectTrigger className='focus: ring-offset-0 focus:ring-0'>
+        <SelectTrigger
+          className='focus: ring-offset-0 focus:ring-0'
+          data-testid='order-select'
+        >
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {Object.entries(orderKeys).map(([url, name]) => (
-            <SelectItem key={url} value={url}>
-              {name}
+          {orderSelectItems.map(({ display }) => (
+            <SelectItem key={display} value={display}>
+              {display}
             </SelectItem>
           ))}
         </SelectContent>
