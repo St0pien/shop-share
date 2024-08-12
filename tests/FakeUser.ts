@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 
 import { createCaller } from '@/server/api/root';
 import { db } from '@/server/db';
-import { spaces, users } from '@/server/db/schema';
+import { users } from '@/server/db/schema';
 
 export class FakeUser {
   constructor(public id = 'dc2c64f1-6204-450f-a140-bbda9c1c3084') {}
@@ -31,9 +31,6 @@ export class FakeUser {
   }
 
   async cleanup() {
-    const deleteSpaces = db.delete(spaces).where(eq(spaces.admin, this.id));
-    const deleteUser = db.delete(users).where(eq(users.id, this.id));
-
-    await Promise.all([deleteSpaces, deleteUser]);
+    await db.delete(users).where(eq(users.id, this.id));
   }
 }

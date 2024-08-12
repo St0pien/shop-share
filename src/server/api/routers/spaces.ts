@@ -14,6 +14,13 @@ import {
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { Order } from '../schema';
 
+const orderClause: Record<Order, SQL | PgColumn> = {
+  'alpha-asc': spaces.name,
+  'alpha-desc': desc(spaces.name),
+  latest: desc(spaces.createdAt),
+  oldest: spaces.createdAt
+};
+
 export const spacesRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.string())
@@ -99,13 +106,6 @@ export const spacesRouter = createTRPCRouter({
         .having(searchFilter);
 
       const order = input?.order ?? 'alpha-asc';
-
-      const orderClause: Record<Order, SQL | PgColumn> = {
-        'alpha-asc': spaces.name,
-        'alpha-desc': desc(spaces.name),
-        latest: desc(spaces.createdAt),
-        oldest: spaces.createdAt
-      };
 
       return rows.orderBy(orderClause[order]);
     })
