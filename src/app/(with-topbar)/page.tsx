@@ -83,7 +83,7 @@ export default async function HomePage({
           </Suspense>
         </div>
       </div>
-      <div className='fixed bottom-32 right-8'>
+      <div className='fixed bottom-32 right-8 z-20'>
         <AddSpaceDialog />
       </div>
     </HydrateClient>
