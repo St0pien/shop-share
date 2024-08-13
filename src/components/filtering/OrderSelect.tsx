@@ -1,7 +1,6 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
 
 import {
   Select,
@@ -47,23 +46,10 @@ export function OrderSelect({ orderSelectItems }: Props) {
     i => i.url === orderParam
   )?.display;
 
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <div className='flex w-full items-center gap-2'>
       <Label className='text-neutral-light'>Order:</Label>
-      <Select
-        open={isOpen}
-        onOpenChange={open => {
-          // HACK: Delaying opening/closing to avoid clicking elements underneath.
-          // This is workaround for: https://github.com/radix-ui/primitives/issues/1658
-          setTimeout(() => {
-            setIsOpen(open);
-          });
-        }}
-        defaultValue={selectedOption}
-        onValueChange={onSwitch}
-      >
+      <Select defaultValue={selectedOption} onValueChange={onSwitch}>
         <SelectTrigger
           className='focus: ring-offset-0 focus:ring-0'
           data-testid='order-select'
