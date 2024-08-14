@@ -44,7 +44,7 @@ export function SpaceCard({ spaceInfo }: SpaceCardProps) {
         </div>
       </div>
       <Link
-        href={spaceInfo.id}
+        href={`/space/${spaceInfo.id}`}
         className='absolute left-0 top-0 z-0 h-full w-full'
       ></Link>
     </div>
