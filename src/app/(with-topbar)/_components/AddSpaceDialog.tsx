@@ -65,7 +65,7 @@ export function AddSpaceDialog() {
 
   return (
     <div>
-      <Dialog open={isOpen} onOpenChange={open => setIsOpen(open)}>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <AddTrigger />
         <DialogContent className='top-1/3 w-4/5 rounded-xl outline-none'>
           <DialogHeader>

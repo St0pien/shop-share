@@ -8,7 +8,7 @@ export function DeleteTrigger(props: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <DialogTrigger asChild>
       <Button
-        className='flex h-10 w-10 items-center justify-center p-2'
+        className='focus-visible:focus-offset-0 flex h-10 w-10 items-center justify-center p-2 focus-visible:ring-0'
         variant='destructive'
         {...props}
       >

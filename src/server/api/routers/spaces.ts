@@ -2,14 +2,17 @@ import { z } from 'zod';
 import { and, count, desc, eq, exists, ilike, type SQL } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 import { type PgColumn } from 'drizzle-orm/pg-core';
+import { JWSSignatureVerificationFailed } from 'jose/errors';
 
 import {
   categories,
   items,
   lists,
   spaceMembers,
-  spaces
+  spaces,
+  users
 } from '@/server/db/schema';
+import { getSignedId, verifySignedId } from '@/server/lib/jwt';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { Order } from '../schema';
@@ -122,10 +125,100 @@ export const spacesRouter = createTRPCRouter({
       if (deletedSpace === undefined) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Could not found space with provided id'
+          message: 'Could not find space with provided id'
         });
       }
 
       return deletedSpace;
+    }),
+  generateInvite: protectedProcedure
+    .input(z.string().uuid())
+    .mutation(async ({ ctx, input: spaceId }) => {
+      const rows = await ctx.db
+        .select()
+        .from(spaces)
+        .where(
+          and(eq(spaces.id, spaceId), eq(spaces.admin, ctx.session.user.id))
+        );
+
+      if (rows.length !== 1) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Could not find space with provided id'
+        });
+      }
+
+      return getSignedId(spaceId);
+    }),
+
+  joinThroughInvite: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input: token }) => {
+      const spaceId = await verifySignedId(token).catch(error => {
+        if (error instanceof JWSSignatureVerificationFailed) {
+          throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'Invalid invitation token'
+          });
+        }
+
+        throw error;
+      });
+
+      const existingUsers = await ctx.db
+        .select()
+        .from(spaceMembers)
+        .where(
+          and(
+            eq(spaceMembers.spaceId, spaceId),
+            eq(spaceMembers.userId, ctx.session.user.id)
+          )
+        );
+
+      if (existingUsers.length > 0) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'You are already a member of this space'
+        });
+      }
+
+      await ctx.db.insert(spaceMembers).values({
+        userId: ctx.session.user.id,
+        spaceId: spaceId
+      });
+    }),
+  getInviteInfo: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input: token }) => {
+      const spaceId = await verifySignedId(token).catch(error => {
+        if (error instanceof JWSSignatureVerificationFailed) {
+          throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'Invalid invititaion token'
+          });
+        }
+        throw error;
+      });
+
+      const [first] = await ctx.db
+        .select({
+          id: spaces.id,
+          name: spaces.name,
+          adminId: spaces.admin,
+          adminName: users.name,
+          createdAt: spaces.createdAt
+        })
+        .from(spaces)
+        .where(eq(spaces.id, spaceId))
+        .leftJoin(users, eq(spaces.admin, users.id));
+
+      if (first === undefined) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'No space with this id'
+        });
+      }
+
+      return first;
     })
 });

@@ -1,10 +1,10 @@
 import { LayoutGrid, ListChecks, ShoppingCart, Users } from 'lucide-react';
 import Link from 'next/link';
 
-import { ShareButton } from '@/components/buttons/ShareButton';
 import { type SpaceInfo } from '@/lib/types';
 
 import { DeleteSpaceDialog } from './DeleteSpaceDialog';
+import { ShareSpaceDialog } from './ShareSpaceDialog';
 
 interface SpaceCardProps {
   spaceInfo: SpaceInfo;
@@ -39,7 +39,7 @@ export function SpaceCard({ spaceInfo }: SpaceCardProps) {
           </div>
         </div>
         <div className='z-10 flex h-full w-full flex-shrink flex-col items-center justify-end gap-4'>
-          <ShareButton />
+          <ShareSpaceDialog spaceId={spaceInfo.id} />
           <DeleteSpaceDialog space={spaceInfo} />
         </div>
       </div>

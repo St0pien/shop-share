@@ -35,7 +35,7 @@ export function DeleteSpaceDialog({ space }: Props) {
   const [open, setIsOpen] = useState(false);
 
   return (
-    <Dialog open={open} onOpenChange={open => setIsOpen(open)}>
+    <Dialog open={open} onOpenChange={setIsOpen}>
       <DeleteTrigger />
       <DialogContent className='top-1/3 w-4/5 rounded-xl outline-none'>
         <DialogHeader>
