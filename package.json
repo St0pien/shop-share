@@ -15,7 +15,8 @@
     "start": "next start",
     "test:unit": "vitest --project unit",
     "test:integration": "vitest --project integration",
-    "test": "vitest"
+    "test": "vitest",
+    "predeploy": "pnpm build && pnpm db:generate && pnpm db:migrate"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.1.0",
