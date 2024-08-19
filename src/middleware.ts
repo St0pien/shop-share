@@ -14,12 +14,14 @@ export const config = {
 };
 
 export async function middleware(req: NextRequest) {
-  if (!req.cookies.has('authjs.session-token')) {
-    const signInUrl = new URL(
-      `/login?callback=${encodeURIComponent(req.url)}`,
-      new URL(req.url).origin
-    );
-
-    return NextResponse.redirect(signInUrl);
+  if (req.cookies.has('authjs.session-token')) {
+    return NextResponse.next();
   }
+
+  const signInUrl = new URL(
+    `/login?callback=${encodeURIComponent(req.url)}`,
+    new URL(req.url).origin
+  );
+
+  return NextResponse.redirect(signInUrl);
 }
