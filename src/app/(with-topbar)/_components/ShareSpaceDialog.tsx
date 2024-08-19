@@ -14,8 +14,9 @@ import {
 } from '@/components/ui/dialog';
 import { api } from '@/trpc/react';
 import { Spinner } from '@/components/svg/Spinner';
+import { type SpaceInfo } from '@/lib/types';
 
-export function ShareSpaceDialog({ spaceId }: { spaceId: string }) {
+export function ShareSpaceDialog({ space }: { space: SpaceInfo }) {
   const [isOpen, setIsOpen] = useState(false);
   const [inviteLink, setInviteLink] = useState<string>();
 
@@ -28,7 +29,7 @@ export function ShareSpaceDialog({ spaceId }: { spaceId: string }) {
 
   const onTrigger = (open: boolean) => {
     if (open) {
-      generateInvite(spaceId);
+      generateInvite(space.id);
     }
 
     setIsOpen(open);
@@ -43,8 +44,7 @@ export function ShareSpaceDialog({ spaceId }: { spaceId: string }) {
   const shareLink = async () => {
     await navigator.share({
       url: inviteLink,
-      title: 'Shop share',
-      text: 'invites you to your space'
+      title: `ShopShare | ${space.name} invitation`
     });
 
     setIsOpen(false);
@@ -53,7 +53,10 @@ export function ShareSpaceDialog({ spaceId }: { spaceId: string }) {
   return (
     <Dialog open={isOpen} onOpenChange={onTrigger}>
       <ShareTrigger />
-      <DialogContent className='top-1/3 w-4/5 rounded-xl outline-none'>
+      <DialogContent
+        className='top-1/3 w-4/5 rounded-xl outline-none'
+        onOpenAutoFocus={e => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle className='text-2xl font-bold'>
             Invitation link
