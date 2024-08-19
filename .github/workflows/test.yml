@@ -8,6 +8,7 @@ env:
   NEXTAUTH_URL: 'http://localhost:3000'
   AUTH_GOOGLE_ID: 'asdf'
   AUTH_GOOGLE_SECRET: 'asdf'
+  JWT_SECRET: 'asdf'
 jobs:
   run-unit-tests:
     name: Run unit tests
