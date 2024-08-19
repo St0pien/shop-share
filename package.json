@@ -10,7 +10,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "dev": "next dev",
-    "lint": "next lint",
+    "lint": "tsc --noEmit && next lint",
     "format": "prettier -w src/* drizzle.config.ts tailwind.config.ts",
     "start": "next start",
     "test:unit": "vitest --project unit",

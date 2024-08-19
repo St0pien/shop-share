@@ -39,7 +39,7 @@ export function SpaceCard({ spaceInfo }: SpaceCardProps) {
           </div>
         </div>
         <div className='z-10 flex h-full w-full flex-shrink flex-col items-center justify-end gap-4'>
-          <ShareSpaceDialog spaceId={spaceInfo} />
+          <ShareSpaceDialog space={spaceInfo} />
           <DeleteSpaceDialog space={spaceInfo} />
         </div>
       </div>

@@ -24,5 +24,6 @@ jobs:
         with:
           eslint: true
           prettier: true
+          tsc: true
           eslint_extensions: "html,js,jsx,ts,tsx"
           prettier_extensions: "css,html,js,jsx,ts,tsx"
