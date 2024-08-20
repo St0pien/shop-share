@@ -3,10 +3,8 @@
 import { SearchIcon, X } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { type ChangeEventHandler, useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
 
 import { Input } from '@/components/ui/input';
-import { SEARCH_DEBOUNCE } from '@/lib/const';
 
 export function SearchBar() {
   const pathname = usePathname();
@@ -17,7 +15,7 @@ export function SearchBar() {
     searchParams.get('search') ?? ''
   );
 
-  const updateSearchParams = useDebouncedCallback((text: string) => {
+  const updateSearchParams = (text: string) => {
     let url = pathname;
 
     const newParams = new URLSearchParams(searchParams);
@@ -33,7 +31,7 @@ export function SearchBar() {
     }
 
     router.replace(url);
-  }, SEARCH_DEBOUNCE);
+  };
 
   const handleSearch: ChangeEventHandler<HTMLInputElement> = e => {
     setSearchText(e.target.value);

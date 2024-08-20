@@ -53,7 +53,7 @@ describe.concurrent('Spaces', () => {
   });
 
   describe('fetch', () => {
-    test('returns all spaces on empty search', async () => {
+    test('returns all spaces', async () => {
       const names = [
         'Space uno',
         'Space duo',
@@ -68,40 +68,6 @@ describe.concurrent('Spaces', () => {
 
       names.forEach(name => {
         expect(result.map(r => r.name)).toContain(name);
-      });
-    });
-
-    test('correctly returns partially matched search', async () => {
-      const names = [
-        'Space of things',
-        'Ace of spades',
-        'Thin guy',
-        'Thinking about spaces',
-        'this is sparta'
-      ];
-
-      await Promise.all(names.map(api.spaces.create));
-
-      const thinSearch = await api.spaces.fetch({ search: 'thin' });
-      const thinSearchNames = thinSearch.map(r => r.name);
-
-      [0, 2, 3].forEach(i => {
-        expect(thinSearchNames).toContain(names[i]);
-      });
-
-      [1, 4].forEach(i => {
-        expect(thinSearchNames).not.toContain(names[i]);
-      });
-
-      const thisSearch = await api.spaces.fetch({ search: 'this' });
-      const thisSearchNames = thisSearch.map(r => r.name);
-
-      [0, 3, 4].forEach(i => {
-        expect(thisSearchNames).toContain(names[i]);
-      });
-
-      [1, 2].forEach(i => {
-        expect(thisSearchNames).not.toContain(names[i]);
       });
     });
   });

@@ -1,11 +1,9 @@
-import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
-import { auth } from '@/server/auth';
 import { api, HydrateClient } from '@/trpc/server';
 import { Spinner } from '@/components/svg/Spinner';
 import { OrderSelect } from '@/components/filtering/OrderSelect';
-import { type Order } from '@/server/api/schema';
+import { spaceOrders } from '@/lib/order';
 
 import { AddSpaceDialog } from './_components/AddSpaceDialog';
 import { SpaceCardList } from './_components/SpaceCardList';
@@ -18,68 +16,26 @@ function SpinnerFallback() {
   );
 }
 
-interface OrderMapItem {
-  param: Order;
-  url: string;
-  display: string;
-}
-
-const orderMap: OrderMapItem[] = [
-  {
-    param: 'alpha-asc',
-    url: '',
-    display: 'A-Z'
-  },
-  {
-    param: 'alpha-desc',
-    url: 'z-a',
-    display: 'Z-A'
-  },
-  {
-    param: 'latest',
-    url: 'latest',
-    display: 'Latest'
-  },
-  {
-    param: 'oldest',
-    url: 'oldest',
-    display: 'Oldest'
-  }
-];
-
-export default async function HomePage({
-  searchParams
-}: {
-  searchParams: { search?: string; order?: string };
-}) {
-  const session = await auth();
-
-  if (!session) {
-    redirect('/login');
-  }
-
-  const order = orderMap.find(o => o.url === searchParams.order)?.param;
-
-  void api.spaces.fetch.prefetch({
-    search: searchParams.search,
-    order
-  });
+export default async function HomePage() {
+  void api.spaces.fetch.prefetch();
 
   return (
     <HydrateClient>
       <div className='grid h-full w-full grid-rows-[min-content_1fr]'>
         <div className='flex w-full justify-end border-b-white px-[8%] pb-4 pt-2'>
           <div className='w-40'>
-            <OrderSelect orderSelectItems={orderMap} />
+            <OrderSelect
+              orderSelectItems={spaceOrders.map(({ url, display }) => ({
+                url,
+                display
+              }))}
+            />
           </div>
         </div>
 
         <div className='h-full w-full overflow-y-auto'>
-          <Suspense
-            key={`${searchParams.search}${order}`}
-            fallback={<SpinnerFallback />}
-          >
-            <SpaceCardList search={searchParams.search} order={order} />
+          <Suspense fallback={<SpinnerFallback />}>
+            <SpaceCardList />
           </Suspense>
         </div>
       </div>

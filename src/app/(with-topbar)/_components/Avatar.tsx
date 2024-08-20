@@ -20,6 +20,7 @@ export async function Avatar() {
     <Popover>
       <PopoverTrigger>
         <Image
+          priority
           className='rounded-full'
           src={session.user.image ?? ''}
           alt={session.user.name ?? ''}

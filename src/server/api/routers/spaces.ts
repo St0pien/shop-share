@@ -1,7 +1,6 @@
 import { z } from 'zod';
-import { and, count, desc, eq, exists, ilike, type SQL } from 'drizzle-orm';
+import { and, count, eq, exists } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
-import { type PgColumn } from 'drizzle-orm/pg-core';
 import { JWSSignatureVerificationFailed } from 'jose/errors';
 
 import {
@@ -15,14 +14,6 @@ import {
 import { getSignedId, verifySignedId } from '@/server/lib/jwt';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-import { Order } from '../schema';
-
-const orderClause: Record<Order, SQL | PgColumn> = {
-  'alpha-asc': spaces.name,
-  'alpha-desc': desc(spaces.name),
-  latest: desc(spaces.createdAt),
-  oldest: spaces.createdAt
-};
 
 export const spacesRouter = createTRPCRouter({
   create: protectedProcedure
@@ -58,60 +49,37 @@ export const spacesRouter = createTRPCRouter({
       return spaceId;
     }),
 
-  fetch: protectedProcedure
-    .input(
-      z
-        .object({
-          search: z.string().optional(),
-          order: Order.optional()
-        })
-        .optional()
-    )
-    .query(async ({ ctx, input }) => {
-      let searchFilter = undefined;
-
-      if (input?.search) {
-        searchFilter = ilike(
-          spaces.name,
-          `%${input.search.split('').join('%')}%`
-        );
-      }
-
-      const rows = ctx.db
-        .select({
-          id: spaces.id,
-          name: spaces.name,
-          createdAt: spaces.createdAt,
-          listQuantity: count(lists.id),
-          itemsQuantity: count(items.id),
-          categoriesQuantity: count(categories.id),
-          membersQuantity: count(spaceMembers.userId)
-        })
-        .from(spaces)
-        .where(
-          exists(
-            ctx.db
-              .select()
-              .from(spaceMembers)
-              .where(
-                and(
-                  eq(spaceMembers.spaceId, spaces.id),
-                  eq(spaceMembers.userId, ctx.session.user.id)
-                )
+  fetch: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db
+      .select({
+        id: spaces.id,
+        name: spaces.name,
+        createdAt: spaces.createdAt,
+        listQuantity: count(lists.id),
+        itemsQuantity: count(items.id),
+        categoriesQuantity: count(categories.id),
+        membersQuantity: count(spaceMembers.userId)
+      })
+      .from(spaces)
+      .where(
+        exists(
+          ctx.db
+            .select()
+            .from(spaceMembers)
+            .where(
+              and(
+                eq(spaceMembers.spaceId, spaces.id),
+                eq(spaceMembers.userId, ctx.session.user.id)
               )
-          )
+            )
         )
-        .leftJoin(lists, eq(lists.spaceId, spaces.id))
-        .leftJoin(items, eq(items.spaceId, spaces.id))
-        .leftJoin(categories, eq(categories.spaceId, spaces.id))
-        .leftJoin(spaceMembers, eq(spaceMembers.spaceId, spaces.id))
-        .groupBy(spaces.id)
-        .having(searchFilter);
-
-      const order = input?.order ?? 'alpha-asc';
-
-      return rows.orderBy(orderClause[order]);
-    }),
+      )
+      .leftJoin(lists, eq(lists.spaceId, spaces.id))
+      .leftJoin(items, eq(items.spaceId, spaces.id))
+      .leftJoin(categories, eq(categories.spaceId, spaces.id))
+      .leftJoin(spaceMembers, eq(spaceMembers.spaceId, spaces.id))
+      .groupBy(spaces.id);
+  }),
   delete: protectedProcedure
     .input(z.string().uuid())
     .mutation(async ({ ctx, input: spaceId }) => {
