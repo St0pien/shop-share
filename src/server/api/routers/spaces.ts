@@ -188,5 +188,37 @@ export const spacesRouter = createTRPCRouter({
       }
 
       return first;
+    }),
+  getName: protectedProcedure
+    .input(z.string().uuid())
+    .query(async ({ ctx, input: spaceId }) => {
+      const [spaceName] = await ctx.db
+        .select({ spaceName: spaces.name })
+        .from(spaces)
+        .where(
+          and(
+            eq(spaces.id, spaceId),
+            exists(
+              ctx.db
+                .select()
+                .from(spaceMembers)
+                .where(
+                  and(
+                    eq(spaceMembers.spaceId, spaces.id),
+                    eq(spaceMembers.userId, ctx.session.user.id)
+                  )
+                )
+            )
+          )
+        );
+
+      if (spaceName === undefined) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Space with given ID has not been found'
+        });
+      }
+
+      return spaceName;
     })
 });
