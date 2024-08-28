@@ -7,3 +7,10 @@ export interface SpaceInfo {
   categoriesQuantity: number;
   membersQuantity: number;
 }
+
+export interface CategoryInfo {
+  id: string;
+  name: string;
+  createdAt: Date;
+  itemsQuantity: number;
+}
