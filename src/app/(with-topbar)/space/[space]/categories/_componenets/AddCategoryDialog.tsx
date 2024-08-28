@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { useParams } from 'next/navigation';
 
 import { AddTrigger } from '@/components/buttons/AddTrigger';
 import {
@@ -23,6 +25,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Spinner } from '@/components/svg/Spinner';
+import { api } from '@/trpc/react';
 
 const createCategorySchema = z.object({
   name: z
@@ -33,6 +36,21 @@ const createCategorySchema = z.object({
 
 export function AddCategoryDialog() {
   const [isOpen, setIsOpen] = useState(false);
+
+  const { space: spaceId } = useParams<{ space: string }>();
+
+  const { mutate: createCategory, isPending } =
+    api.categories.create.useMutation({
+      onSuccess: data => {
+        setIsOpen(false);
+
+        // TODO: Implement optimstic update
+        console.log(data);
+      },
+      onError: error => {
+        toast.error(error.message);
+      }
+    });
 
   const createCategoryForm = useForm<z.infer<typeof createCategorySchema>>({
     resolver: zodResolver(createCategorySchema),
@@ -45,7 +63,10 @@ export function AddCategoryDialog() {
   const submitHandler: SubmitHandler<z.infer<typeof createCategorySchema>> = ({
     name
   }) => {
-    console.log(name);
+    createCategory({
+      categoryName: name,
+      spaceId
+    });
   };
 
   return (
@@ -61,7 +82,7 @@ export function AddCategoryDialog() {
               Category groups together shopping items
             </DialogDescription>
           </DialogHeader>
-          {!false ? (
+          {!isPending ? (
             <Form {...createCategoryForm}>
               <form
                 className='flex flex-col gap-8'

@@ -15,6 +15,8 @@ import { getSignedId, verifySignedId } from '@/server/lib/jwt';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
+// TODO: Refactor using checkMembership.ts
+
 export const spacesRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.string())
@@ -80,6 +82,7 @@ export const spacesRouter = createTRPCRouter({
       .leftJoin(spaceMembers, eq(spaceMembers.spaceId, spaces.id))
       .groupBy(spaces.id);
   }),
+
   delete: protectedProcedure
     .input(z.string().uuid())
     .mutation(async ({ ctx, input: spaceId }) => {
@@ -155,6 +158,7 @@ export const spacesRouter = createTRPCRouter({
         spaceId: spaceId
       });
     }),
+
   getInviteInfo: protectedProcedure
     .input(z.string())
     .query(async ({ ctx, input: token }) => {
@@ -183,12 +187,13 @@ export const spacesRouter = createTRPCRouter({
       if (first === undefined) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'No space with this id'
+          message: 'Could not find space with provided ID'
         });
       }
 
       return first;
     }),
+
   getName: protectedProcedure
     .input(z.string().uuid())
     .query(async ({ ctx, input: spaceId }) => {

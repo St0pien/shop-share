@@ -7,6 +7,8 @@ interface CategoryCardProps {
   categoryInfo: CategoryInfo;
 }
 
+// TODO: Fix long names display
+
 export function CategoryCard({ categoryInfo }: CategoryCardProps) {
   return (
     <div className='flex w-5/6 justify-between rounded-lg bg-neutral-dark p-4'>

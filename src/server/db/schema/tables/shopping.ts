@@ -52,12 +52,18 @@ export const categories = createTable('category', {
   createdAt: timestamp('created_at', {
     mode: 'date',
     withTimezone: true
-  }).default(sql`CURRENT_TIMESTAMP`)
+  })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull()
 });
 
 export const items = createTable('item', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
+  categoryId: integer('category_id').references(() => categories.id, {
+    onDelete: 'set null',
+    onUpdate: 'cascade'
+  }),
   spaceId: varchar('space_id', { length: 255 })
     .notNull()
     .references(() => spaces.id, { onDelete: 'cascade', onUpdate: 'cascade' }),

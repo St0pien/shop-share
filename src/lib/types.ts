@@ -9,7 +9,7 @@ export interface SpaceInfo {
 }
 
 export interface CategoryInfo {
-  id: string;
+  id: number;
   name: string;
   createdAt: Date;
   itemsQuantity: number;

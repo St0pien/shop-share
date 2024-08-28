@@ -1,6 +1,7 @@
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
 
 import { spacesRouter } from './routers/spaces';
+import { categoriesRouter } from './routers/categories';
 
 /**
  * This is the primary router for your server.
@@ -8,7 +9,8 @@ import { spacesRouter } from './routers/spaces';
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  spaces: spacesRouter
+  spaces: spacesRouter,
+  categories: categoriesRouter
 });
 
 // export type definition of API

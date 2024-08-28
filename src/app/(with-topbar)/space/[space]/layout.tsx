@@ -1,6 +1,8 @@
 import { Navigation } from './_components/Navigation';
 import { SpaceBreadcrumb } from './_components/SpaceBreadcrumb';
 
+// TODO: Implement short-uuid
+
 export default function NavigationLayout({
   children,
   params
@@ -15,5 +17,3 @@ export default function NavigationLayout({
     </div>
   );
 }
-
-// TODO: FIX URL BAR VISIBILITY PROBLEM WITH DYNAMIC VIEWPORT HEIGHT
