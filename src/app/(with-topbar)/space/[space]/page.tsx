@@ -1,3 +1,3 @@
-export default function TmpPage() {
-  return <h1> It&apos;s a page</h1>;
+export default function ShoppingListsPage() {
+  return <h1>Shopping Lists </h1>;
 }
