@@ -19,8 +19,6 @@ export async function isSpaceMember(
       )
     );
 
-  console.log(result);
-
   return result !== undefined;
 }
 

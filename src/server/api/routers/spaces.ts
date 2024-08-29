@@ -12,10 +12,13 @@ import {
   users
 } from '@/server/db/schema';
 import { getSignedId, verifySignedId } from '@/server/lib/jwt';
+import {
+  checkIfSpaceAdmin,
+  checkIfSpaceMember,
+  isSpaceMember
+} from '@/server/lib/checkMembership';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-
-// TODO: Refactor using checkMembership.ts
 
 export const spacesRouter = createTRPCRouter({
   create: protectedProcedure
@@ -86,11 +89,11 @@ export const spacesRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.string().uuid())
     .mutation(async ({ ctx, input: spaceId }) => {
+      await checkIfSpaceAdmin(ctx.db, ctx.session.user.id, spaceId);
+
       const [deletedSpace] = await ctx.db
         .delete(spaces)
-        .where(
-          and(eq(spaces.id, spaceId), eq(spaces.admin, ctx.session.user.id))
-        )
+        .where(eq(spaces.id, spaceId))
         .returning();
 
       if (deletedSpace === undefined) {
@@ -105,6 +108,8 @@ export const spacesRouter = createTRPCRouter({
   generateInvite: protectedProcedure
     .input(z.string().uuid())
     .mutation(async ({ ctx, input: spaceId }) => {
+      await checkIfSpaceAdmin(ctx.db, ctx.session.user.id, spaceId);
+
       const rows = await ctx.db
         .select()
         .from(spaces)
@@ -136,17 +141,13 @@ export const spacesRouter = createTRPCRouter({
         throw error;
       });
 
-      const existingUsers = await ctx.db
-        .select()
-        .from(spaceMembers)
-        .where(
-          and(
-            eq(spaceMembers.spaceId, spaceId),
-            eq(spaceMembers.userId, ctx.session.user.id)
-          )
-        );
+      const isMember = await isSpaceMember(
+        ctx.db,
+        ctx.session.user.id,
+        spaceId
+      );
 
-      if (existingUsers.length > 0) {
+      if (isMember) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'You are already a member of this space'
@@ -197,25 +198,12 @@ export const spacesRouter = createTRPCRouter({
   getName: protectedProcedure
     .input(z.string().uuid())
     .query(async ({ ctx, input: spaceId }) => {
+      await checkIfSpaceMember(ctx.db, ctx.session.user.id, spaceId);
+
       const [spaceName] = await ctx.db
         .select({ spaceName: spaces.name })
         .from(spaces)
-        .where(
-          and(
-            eq(spaces.id, spaceId),
-            exists(
-              ctx.db
-                .select()
-                .from(spaceMembers)
-                .where(
-                  and(
-                    eq(spaceMembers.spaceId, spaces.id),
-                    eq(spaceMembers.userId, ctx.session.user.id)
-                  )
-                )
-            )
-          )
-        );
+        .where(eq(spaces.id, spaceId));
 
       if (spaceName === undefined) {
         throw new TRPCError({

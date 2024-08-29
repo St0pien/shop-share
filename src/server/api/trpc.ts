@@ -12,6 +12,7 @@ import superjson from 'superjson';
 
 import { auth } from '@/server/auth';
 import { db } from '@/server/db';
+import { wait } from '@/lib/utils';
 
 /**
  * 1. CONTEXT
@@ -93,7 +94,9 @@ export const publicProcedure = t.procedure;
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
+  await wait(1500);
+
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
