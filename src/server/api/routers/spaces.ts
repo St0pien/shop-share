@@ -17,6 +17,7 @@ import {
   checkIfSpaceMember,
   isSpaceMember
 } from '@/server/lib/checkMembership';
+import { ErrorMessage } from '@/lib/ErrorMessage';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -35,7 +36,7 @@ export const spacesRouter = createTRPCRouter({
 
         if (result.length === 0) {
           throw new TRPCError({
-            message: 'Error during space creation',
+            message: ErrorMessage.DATABASE_ERROR,
             code: 'INTERNAL_SERVER_ERROR',
             cause: 'Failed to insert space into database'
           });
@@ -99,7 +100,7 @@ export const spacesRouter = createTRPCRouter({
       if (deletedSpace === undefined) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Could not find space with provided id'
+          message: ErrorMessage.SPACE_NOT_FOUND
         });
       }
 
@@ -120,7 +121,7 @@ export const spacesRouter = createTRPCRouter({
       if (rows.length !== 1) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Could not find space with provided id'
+          message: ErrorMessage.SPACE_NOT_FOUND
         });
       }
 
@@ -134,7 +135,7 @@ export const spacesRouter = createTRPCRouter({
         if (error instanceof JWSSignatureVerificationFailed) {
           throw new TRPCError({
             code: 'UNAUTHORIZED',
-            message: 'Invalid invitation token'
+            message: ErrorMessage.INVALID_INVITATION
           });
         }
 
@@ -150,7 +151,7 @@ export const spacesRouter = createTRPCRouter({
       if (isMember) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: 'You are already a member of this space'
+          message: ErrorMessage.ALREADY_A_MEMBER
         });
       }
 
@@ -167,7 +168,7 @@ export const spacesRouter = createTRPCRouter({
         if (error instanceof JWSSignatureVerificationFailed) {
           throw new TRPCError({
             code: 'UNAUTHORIZED',
-            message: 'Invalid invititaion token'
+            message: ErrorMessage.INVALID_INVITATION
           });
         }
         throw error;
@@ -188,7 +189,7 @@ export const spacesRouter = createTRPCRouter({
       if (first === undefined) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Could not find space with provided ID'
+          message: ErrorMessage.SPACE_NOT_FOUND
         });
       }
 
@@ -208,7 +209,7 @@ export const spacesRouter = createTRPCRouter({
       if (spaceName === undefined) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Space with given ID has not been found'
+          message: ErrorMessage.SPACE_NOT_FOUND
         });
       }
 

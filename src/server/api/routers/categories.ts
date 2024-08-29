@@ -4,6 +4,7 @@ import { count, eq } from 'drizzle-orm';
 
 import { categories, items } from '@/server/db/schema';
 import { checkIfSpaceMember } from '@/server/lib/checkMembership';
+import { ErrorMessage } from '@/lib/ErrorMessage';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -29,7 +30,7 @@ export const categoriesRouter = createTRPCRouter({
       if (category === undefined) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed writing to database'
+          message: ErrorMessage.DATABASE_ERROR
         });
       }
 

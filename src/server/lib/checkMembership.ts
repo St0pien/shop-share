@@ -2,6 +2,8 @@ import { type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { and, eq } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
+import { ErrorMessage } from '@/lib/ErrorMessage';
+
 import * as schema from '../db/schema';
 
 export async function isSpaceMember(
@@ -35,7 +37,7 @@ export async function isSpaceAdmin(
   if (result === undefined) {
     throw new TRPCError({
       code: 'NOT_FOUND',
-      message: 'Could not find space with provided ID'
+      message: ErrorMessage.SPACE_NOT_FOUND
     });
   }
 
@@ -52,7 +54,7 @@ export async function checkIfSpaceMember(
   if (!isMember) {
     throw new TRPCError({
       code: 'FORBIDDEN',
-      message: "You aren't a member of this space"
+      message: ErrorMessage.NOT_A_MEMBER
     });
   }
 }
@@ -67,7 +69,7 @@ export async function checkIfSpaceAdmin(
   if (!isAdmin) {
     throw new TRPCError({
       code: 'FORBIDDEN',
-      message: "You aren't an admin of this space"
+      message: ErrorMessage.NOT_AN_ADMIN
     });
   }
 }
