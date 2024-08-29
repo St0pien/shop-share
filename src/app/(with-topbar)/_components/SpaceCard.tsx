@@ -2,6 +2,7 @@ import { LayoutGrid, ListChecks, ShoppingCart, Users } from 'lucide-react';
 import Link from 'next/link';
 
 import { type SpaceInfo } from '@/lib/types';
+import { uuidTranslator } from '@/lib/uuidTranslator';
 
 import { DeleteSpaceDialog } from './DeleteSpaceDialog';
 import { ShareSpaceDialog } from './ShareSpaceDialog';
@@ -44,7 +45,7 @@ export function SpaceCard({ spaceInfo }: SpaceCardProps) {
         </div>
       </div>
       <Link
-        href={`/space/${spaceInfo.id}`}
+        href={`/space/${uuidTranslator.fromUUID(spaceInfo.id)}`}
         className='absolute left-0 top-0 z-0 h-full w-full'
       ></Link>
     </div>
