@@ -12,7 +12,7 @@ export default function NavigationLayout({
       <div className='flex h-full w-full px-[10%]'>
         <SpaceBreadcrumb spaceId={params.space} />
       </div>
-      <div className='h-[calc(100dvh_-_160px_-_40px)]'>{children}</div>
+      <div className='h-[calc(100dvh_-_160px_-_40px)] w-full'>{children}</div>
       <Navigation />
     </div>
   );
