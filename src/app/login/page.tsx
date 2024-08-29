@@ -6,6 +6,8 @@ import { auth } from '@/server/auth';
 
 import { GoogleOauthButton } from './_components/GoogleOauthButton';
 
+// TODO: Improve sizing of login page
+
 const DynamicThemeSwitch = dynamic(
   () => import('@/components/ThemeSwitch').then(mod => mod.ThemeSwitch),
   {

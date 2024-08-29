@@ -1,3 +1,3 @@
-import shortUUID from "short-uuid";
+import shortUUID from 'short-uuid';
 
 export const uuidTranslator = shortUUID();

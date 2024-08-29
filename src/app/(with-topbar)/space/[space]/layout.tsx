@@ -3,8 +3,6 @@ import { uuidTranslator } from '@/lib/uuidTranslator';
 import { Navigation } from './_components/Navigation';
 import { SpaceBreadcrumb } from './_components/SpaceBreadcrumb';
 
-// TODO: Implement short-uuid
-
 export default function NavigationLayout({
   children,
   params

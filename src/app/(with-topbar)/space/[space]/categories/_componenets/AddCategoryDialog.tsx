@@ -24,8 +24,8 @@ import {
   FormItem,
   FormMessage
 } from '@/components/ui/form';
-import { Spinner } from '@/components/svg/Spinner';
 import { api } from '@/trpc/react';
+import { uuidTranslator } from '@/lib/uuidTranslator';
 
 const createCategorySchema = z.object({
   name: z
@@ -37,20 +37,44 @@ const createCategorySchema = z.object({
 export function AddCategoryDialog() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { space: spaceId } = useParams<{ space: string }>();
+  const { space: shortSpaceId } = useParams<{ space: string }>();
 
-  const { mutate: createCategory, isPending } =
-    api.categories.create.useMutation({
-      onSuccess: data => {
-        setIsOpen(false);
+  const spaceId = uuidTranslator.toUUID(shortSpaceId);
 
-        // TODO: Implement optimstic update
-        console.log(data);
-      },
-      onError: error => {
-        toast.error(error.message);
+  const utils = api.useUtils();
+
+  const { mutate: createCategory } = api.categories.create.useMutation({
+    onMutate: async ({ categoryName, spaceId }) => {
+      await utils.categories.fetch.cancel(spaceId);
+      const previousCategories = utils.categories.fetch.getData(spaceId);
+
+      const previousPart = previousCategories ?? [];
+      const lastID =
+        previousPart.length > 0 ? Math.max(...previousPart.map(c => c.id)) : 1;
+
+      utils.categories.fetch.setData(spaceId, [
+        ...(previousCategories ?? []),
+        {
+          id: lastID + 1,
+          name: categoryName,
+          itemsQuantity: 0,
+          createdAt: new Date()
+        }
+      ]);
+
+      return { previousCategories };
+    },
+    onSettled: async () => {
+      await utils.categories.fetch.invalidate(spaceId);
+    },
+    onError: (error, _, ctx) => {
+      toast.error(error.message);
+
+      if (ctx !== undefined) {
+        utils.categories.fetch.setData(spaceId, ctx.previousCategories);
       }
-    });
+    }
+  });
 
   const createCategoryForm = useForm<z.infer<typeof createCategorySchema>>({
     resolver: zodResolver(createCategorySchema),
@@ -67,6 +91,8 @@ export function AddCategoryDialog() {
       categoryName: name,
       spaceId
     });
+    setIsOpen(false);
+    createCategoryForm.setValue('name', '');
   };
 
   return (
@@ -82,43 +108,37 @@ export function AddCategoryDialog() {
               Category groups together shopping items
             </DialogDescription>
           </DialogHeader>
-          {!isPending ? (
-            <Form {...createCategoryForm}>
-              <form
-                className='flex flex-col gap-8'
-                onSubmit={createCategoryForm.handleSubmit(submitHandler)}
-              >
-                <FormField
-                  control={createCategoryForm.control}
-                  name='name'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input id='space-name' placeholder='Name' {...field} />
-                      </FormControl>
-                      <FormMessage className='dark:text-red-600' />
-                    </FormItem>
-                  )}
-                ></FormField>
-                <DialogFooter>
-                  <div className='flex justify-between'>
-                    <Button
-                      type='button'
-                      variant='secondary'
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button>Save</Button>
-                  </div>
-                </DialogFooter>
-              </form>
-            </Form>
-          ) : (
-            <div className='flex h-full w-full items-center justify-center'>
-              <Spinner className='h-20 w-20' />
-            </div>
-          )}
+          <Form {...createCategoryForm}>
+            <form
+              className='flex flex-col gap-8'
+              onSubmit={createCategoryForm.handleSubmit(submitHandler)}
+            >
+              <FormField
+                control={createCategoryForm.control}
+                name='name'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input id='space-name' placeholder='Name' {...field} />
+                    </FormControl>
+                    <FormMessage className='dark:text-red-600' />
+                  </FormItem>
+                )}
+              ></FormField>
+              <DialogFooter>
+                <div className='flex justify-between'>
+                  <Button
+                    type='button'
+                    variant='secondary'
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button>Save</Button>
+                </div>
+              </DialogFooter>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </div>

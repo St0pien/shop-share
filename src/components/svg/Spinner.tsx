@@ -19,3 +19,11 @@ export function Spinner({ className, ...props }: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function WrappedSpinner() {
+  return (
+    <div className='flex w-full justify-center pt-10'>
+      <Spinner className='h-20 w-20' />
+    </div>
+  );
+}
