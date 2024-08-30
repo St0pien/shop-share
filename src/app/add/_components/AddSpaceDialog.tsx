@@ -20,7 +20,7 @@ import { api } from '@/trpc/react';
 import { Spinner } from '@/components/svg/Spinner';
 import {
   StandardDialog,
-  type StandardDialogProps
+  type StandardDialogExtProps
 } from '@/components/StandardDialog';
 
 const createSpaceSchema = z.object({
@@ -30,12 +30,7 @@ const createSpaceSchema = z.object({
     .max(255, { message: 'Too long name' })
 });
 
-export function AddSpaceDialog(
-  props: Omit<
-    StandardDialogProps,
-    'open' | 'title' | 'description' | 'children'
-  >
-) {
+export function AddSpaceDialog(props: StandardDialogExtProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   const utils = api.useUtils();

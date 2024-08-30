@@ -3,8 +3,8 @@ import Link from 'next/link';
 
 import { type SpaceInfo } from '@/lib/types';
 import { uuidTranslator } from '@/lib/uuidTranslator';
+import { DeleteLink } from '@/components/buttons/DeleteLink';
 
-import { DeleteSpaceDialog } from './DeleteSpaceDialog';
 import { ShareSpaceDialog } from './ShareSpaceDialog';
 
 interface SpaceCardProps {
@@ -43,7 +43,9 @@ export function SpaceCard({ spaceInfo }: SpaceCardProps) {
         </div>
         <div className='z-10 flex h-full w-full flex-col items-center justify-end gap-4'>
           <ShareSpaceDialog space={spaceInfo} />
-          <DeleteSpaceDialog space={spaceInfo} />
+          <DeleteLink
+            href={`/delete/${uuidTranslator.fromUUID(spaceInfo.id)}`}
+          />
         </div>
       </div>
       <Link

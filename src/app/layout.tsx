@@ -9,6 +9,8 @@ import { Toaster } from '@/components/ui/sonner';
 
 import { ThemeProvider } from './_components/ThemeProvider';
 
+// TODO: Add error handling to queries
+
 export const metadata: Metadata = {
   title: 'ShopShare',
   description: 'Shopping list sharing app',

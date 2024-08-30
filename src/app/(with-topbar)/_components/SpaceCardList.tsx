@@ -13,6 +13,11 @@ import { SpaceCard } from './SpaceCard';
 export function SpaceCardList() {
   const [spaces] = api.spaces.fetch.useSuspenseQuery();
 
+  const utils = api.useUtils();
+  spaces.forEach(space => {
+    utils.spaces.get.setData(space.id, space);
+  });
+
   const fuse = useMemo(
     () =>
       new Fuse(spaces, {

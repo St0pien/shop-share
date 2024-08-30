@@ -87,6 +87,39 @@ export const spacesRouter = createTRPCRouter({
       .groupBy(spaces.id);
   }),
 
+  get: protectedProcedure
+    .input(z.string().uuid())
+    .query(async ({ ctx, input: spaceId }) => {
+      await checkIfSpaceMember(ctx.db, ctx.session.user.id, spaceId);
+
+      const [spaceInfo] = await ctx.db
+        .select({
+          id: spaces.id,
+          name: spaces.name,
+          createdAt: spaces.createdAt,
+          listQuantity: countDistinct(lists.id),
+          itemsQuantity: countDistinct(items.id),
+          categoriesQuantity: countDistinct(categories.id),
+          membersQuantity: countDistinct(spaceMembers.userId)
+        })
+        .from(spaces)
+        .where(eq(spaces.id, spaceId))
+        .leftJoin(lists, eq(lists.spaceId, spaces.id))
+        .leftJoin(items, eq(items.spaceId, spaces.id))
+        .leftJoin(categories, eq(categories.spaceId, spaces.id))
+        .leftJoin(spaceMembers, eq(spaceMembers.spaceId, spaces.id))
+        .groupBy(spaces.id);
+
+      if (spaceInfo === undefined) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: ErrorMessage.SPACE_NOT_FOUND
+        });
+      }
+
+      return spaceInfo;
+    }),
+
   delete: protectedProcedure
     .input(z.string().uuid())
     .mutation(async ({ ctx, input: spaceId }) => {

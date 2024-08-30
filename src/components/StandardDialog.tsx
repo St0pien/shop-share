@@ -4,14 +4,20 @@ import { useRouter } from 'next/navigation';
 
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
 
-export interface StandardDialogProps {
+export interface StandardDialogBasicProps {
   open?: boolean;
   children: ReactNode;
   title: ReactNode;
   description: ReactNode;
+}
+
+export interface StandardDialogExtProps {
   disableOutsideInteraction?: boolean;
   returnUrl?: string;
 }
+
+export type StandardDialogProps = StandardDialogBasicProps &
+  StandardDialogExtProps;
 
 export function StandardDialog({
   open,
