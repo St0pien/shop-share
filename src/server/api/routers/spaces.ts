@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { and, count, eq, exists } from 'drizzle-orm';
+import { and, countDistinct, eq, exists } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 import { JWSSignatureVerificationFailed } from 'jose/errors';
 
@@ -61,10 +61,10 @@ export const spacesRouter = createTRPCRouter({
         id: spaces.id,
         name: spaces.name,
         createdAt: spaces.createdAt,
-        listQuantity: count(lists.id),
-        itemsQuantity: count(items.id),
-        categoriesQuantity: count(categories.id),
-        membersQuantity: count(spaceMembers.userId)
+        listQuantity: countDistinct(lists.id),
+        itemsQuantity: countDistinct(items.id),
+        categoriesQuantity: countDistinct(categories.id),
+        membersQuantity: countDistinct(spaceMembers.userId)
       })
       .from(spaces)
       .where(
