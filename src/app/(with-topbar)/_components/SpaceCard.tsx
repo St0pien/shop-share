@@ -11,12 +11,14 @@ interface SpaceCardProps {
   spaceInfo: SpaceInfo;
 }
 
+// TODO: Reimplement layout to better fit longer names
+
 export function SpaceCard({ spaceInfo }: SpaceCardProps) {
   return (
     <div className='relative w-5/6 rounded-lg bg-neutral-dark p-4'>
       <div className='flex w-full justify-between gap-2'>
         <h2 className='overflow-x-auto text-2xl font-bold'>{spaceInfo.name}</h2>
-        <p className='text-sm text-neutral-light'>
+        <p className='shrink-0 text-sm text-neutral-light'>
           {spaceInfo.createdAt.toLocaleDateString()}
         </p>
       </div>

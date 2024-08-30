@@ -1,15 +1,15 @@
 'use client';
 
 import { DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
-import { useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
-import { AddTrigger } from '@/components/buttons/AddTrigger';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader
@@ -26,6 +26,11 @@ import {
 import { api } from '@/trpc/react';
 import { Spinner } from '@/components/svg/Spinner';
 
+interface Props {
+  disableOutsideInteraction?: boolean;
+  returnUrl?: string;
+}
+
 const createSpaceSchema = z.object({
   name: z
     .string()
@@ -33,14 +38,37 @@ const createSpaceSchema = z.object({
     .max(255, { message: 'Too long name' })
 });
 
-export function AddSpaceDialog() {
-  const [isOpen, setIsOpen] = useState(false);
+export function AddSpaceDialog({
+  disableOutsideInteraction = false,
+  returnUrl
+}: Props) {
+  const router = useRouter();
+
+  const closeDialog = () => {
+    if (returnUrl === undefined) {
+      router.back();
+    } else {
+      router.push(returnUrl);
+    }
+  };
+
+  const onOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      closeDialog();
+    }
+  };
+
+  const onInteractOutside = (e: Event) => {
+    if (disableOutsideInteraction) {
+      e.preventDefault();
+    }
+  };
 
   const utils = api.useUtils();
 
   const { mutate: createSpace, isPending } = api.spaces.create.useMutation({
     onSuccess: () => {
-      setIsOpen(false);
+      closeDialog();
       createSpaceForm.setValue('name', '');
       void utils.spaces.fetch.invalidate();
     },
@@ -65,9 +93,11 @@ export function AddSpaceDialog() {
 
   return (
     <div>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <AddTrigger />
-        <DialogContent className='top-1/3 w-4/5 rounded-xl outline-none'>
+      <Dialog defaultOpen={true} onOpenChange={onOpenChange}>
+        <DialogContent
+          className='top-1/3 w-4/5 rounded-xl outline-none'
+          onInteractOutside={onInteractOutside}
+        >
           <DialogHeader>
             <DialogTitle className='text-2xl font-bold'>
               Create shopping space
@@ -96,13 +126,11 @@ export function AddSpaceDialog() {
                 ></FormField>
                 <DialogFooter>
                   <div className='flex justify-between'>
-                    <Button
-                      type='button'
-                      variant='secondary'
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Cancel
-                    </Button>
+                    <DialogClose asChild>
+                      <Button type='button' variant='secondary'>
+                        Cancel
+                      </Button>
+                    </DialogClose>
                     <Button>Save</Button>
                   </div>
                 </DialogFooter>

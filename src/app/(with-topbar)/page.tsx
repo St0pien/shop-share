@@ -4,8 +4,8 @@ import { api, HydrateClient } from '@/trpc/server';
 import { WrappedSpinner } from '@/components/svg/Spinner';
 import { OrderSelect } from '@/components/filtering/OrderSelect';
 import { spaceOrders } from '@/lib/order';
+import { AddLink } from '@/components/buttons/AddLink';
 
-import { AddSpaceDialog } from './_components/AddSpaceDialog';
 import { SpaceCardList } from './_components/SpaceCardList';
 
 export default async function HomePage() {
@@ -32,7 +32,7 @@ export default async function HomePage() {
         </div>
       </div>
       <div className='fixed bottom-32 right-8 z-20'>
-        <AddSpaceDialog />
+        <AddLink href='/add' />
       </div>
     </HydrateClient>
   );
