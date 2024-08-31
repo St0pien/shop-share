@@ -3,14 +3,19 @@ import { and, eq } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
 import { ErrorMessage } from '@/lib/ErrorMessage';
+import * as schema from '@/server/db/schema';
 
-import * as schema from '../db/schema';
+interface SpaceAccessParams {
+  db: PostgresJsDatabase<typeof schema>;
+  userId: string;
+  spaceId: string;
+}
 
-export async function isSpaceMember(
-  db: PostgresJsDatabase<typeof schema>,
-  userId: string,
-  spaceId: string
-) {
+export async function isSpaceMember({
+  db,
+  userId,
+  spaceId
+}: SpaceAccessParams) {
   const [result] = await db
     .select()
     .from(schema.spaceMembers)
@@ -24,11 +29,7 @@ export async function isSpaceMember(
   return result !== undefined;
 }
 
-export async function isSpaceAdmin(
-  db: PostgresJsDatabase<typeof schema>,
-  userId: string,
-  spaceId: string
-) {
+export async function isSpaceAdmin({ db, userId, spaceId }: SpaceAccessParams) {
   const [result] = await db
     .select({ adminId: schema.spaces.admin })
     .from(schema.spaces)
@@ -44,32 +45,24 @@ export async function isSpaceAdmin(
   return result.adminId === userId;
 }
 
-export async function checkIfSpaceMember(
-  db: PostgresJsDatabase<typeof schema>,
-  userId: string,
-  spaceId: string
-) {
-  const isMember = await isSpaceMember(db, userId, spaceId);
+export async function checkAccessSpaceMember(params: SpaceAccessParams) {
+  const isMember = await isSpaceMember(params);
 
   if (!isMember) {
     throw new TRPCError({
       code: 'FORBIDDEN',
-      message: ErrorMessage.NOT_A_MEMBER
+      message: ErrorMessage.ACCESS_DENIED_MEMBER
     });
   }
 }
 
-export async function checkIfSpaceAdmin(
-  db: PostgresJsDatabase<typeof schema>,
-  userId: string,
-  spaceId: string
-) {
-  const isAdmin = await isSpaceAdmin(db, userId, spaceId);
+export async function checkAccessSpaceAdmin(params: SpaceAccessParams) {
+  const isAdmin = await isSpaceAdmin(params);
 
   if (!isAdmin) {
     throw new TRPCError({
       code: 'FORBIDDEN',
-      message: ErrorMessage.NOT_AN_ADMIN
+      message: ErrorMessage.ACCESS_DENIED_ADMIN
     });
   }
 }

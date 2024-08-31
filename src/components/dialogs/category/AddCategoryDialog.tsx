@@ -53,7 +53,8 @@ export function AddCategoryDialog(props: StandardDialogExtProps) {
           id: lastID + 1,
           name: categoryName,
           itemsQuantity: 0,
-          createdAt: new Date()
+          createdAt: new Date(),
+          spaceId
         }
       ]);
 

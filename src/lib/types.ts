@@ -13,4 +13,5 @@ export interface CategoryInfo {
   name: string;
   createdAt: Date;
   itemsQuantity: number;
+  spaceId: string;
 }

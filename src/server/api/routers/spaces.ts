@@ -13,10 +13,10 @@ import {
 } from '@/server/db/schema';
 import { getSignedId, verifySignedId } from '@/server/lib/jwt';
 import {
-  checkIfSpaceAdmin,
-  checkIfSpaceMember,
+  checkAccessSpaceAdmin,
+  checkAccessSpaceMember,
   isSpaceMember
-} from '@/server/lib/checkMembership';
+} from '@/server/lib/access/space';
 import { ErrorMessage } from '@/lib/ErrorMessage';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
@@ -90,7 +90,11 @@ export const spacesRouter = createTRPCRouter({
   get: protectedProcedure
     .input(z.string().uuid())
     .query(async ({ ctx, input: spaceId }) => {
-      await checkIfSpaceMember(ctx.db, ctx.session.user.id, spaceId);
+      await checkAccessSpaceMember({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        spaceId: spaceId
+      });
 
       const [spaceInfo] = await ctx.db
         .select({
@@ -123,7 +127,11 @@ export const spacesRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.string().uuid())
     .mutation(async ({ ctx, input: spaceId }) => {
-      await checkIfSpaceAdmin(ctx.db, ctx.session.user.id, spaceId);
+      await checkAccessSpaceAdmin({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        spaceId
+      });
 
       const [deletedSpace] = await ctx.db
         .delete(spaces)
@@ -142,7 +150,11 @@ export const spacesRouter = createTRPCRouter({
   generateInvite: protectedProcedure
     .input(z.string().uuid())
     .mutation(async ({ ctx, input: spaceId }) => {
-      await checkIfSpaceAdmin(ctx.db, ctx.session.user.id, spaceId);
+      await checkAccessSpaceAdmin({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        spaceId
+      });
 
       const rows = await ctx.db
         .select()
@@ -175,11 +187,11 @@ export const spacesRouter = createTRPCRouter({
         throw error;
       });
 
-      const isMember = await isSpaceMember(
-        ctx.db,
-        ctx.session.user.id,
+      const isMember = await isSpaceMember({
+        db: ctx.db,
+        userId: ctx.session.user.id,
         spaceId
-      );
+      });
 
       if (isMember) {
         throw new TRPCError({
@@ -232,7 +244,11 @@ export const spacesRouter = createTRPCRouter({
   getName: protectedProcedure
     .input(z.string().uuid())
     .query(async ({ ctx, input: spaceId }) => {
-      await checkIfSpaceMember(ctx.db, ctx.session.user.id, spaceId);
+      await checkAccessSpaceMember({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        spaceId
+      });
 
       const [spaceName] = await ctx.db
         .select({ spaceName: spaces.name })

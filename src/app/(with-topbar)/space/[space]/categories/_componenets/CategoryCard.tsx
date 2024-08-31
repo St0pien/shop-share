@@ -1,7 +1,8 @@
-import { ShoppingCart, Trash2 } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import { type CategoryInfo } from '@/lib/types';
+import { DeleteLink } from '@/components/buttons/DeleteLink';
+import { uuidTranslator } from '@/lib/uuidTranslator';
 
 interface CategoryCardProps {
   categoryInfo: CategoryInfo;
@@ -23,9 +24,9 @@ export function CategoryCard({ categoryInfo }: CategoryCardProps) {
         <p className='text-sm text-neutral-light'>
           {categoryInfo.createdAt.toLocaleDateString()}
         </p>
-        <Button className='h-8 w-8 p-0' variant='destructive'>
-          <Trash2 className='text' />
-        </Button>
+        <DeleteLink
+          href={`/space/${uuidTranslator.fromUUID(categoryInfo.spaceId)}/categories/delete/${categoryInfo.id}`}
+        />
       </div>
 
       <div className='fixed bottom-32 right-8 z-20'></div>
