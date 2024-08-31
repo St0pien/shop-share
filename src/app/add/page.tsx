@@ -1,4 +1,4 @@
-import { AddSpaceDialog } from './_components/AddSpaceDialog';
+import { AddSpaceDialog } from "@/components/dialogs/AddSpaceDialog";
 
 export default function AddSpacePage() {
   return <AddSpaceDialog disableOutsideInteraction returnUrl='/' />;

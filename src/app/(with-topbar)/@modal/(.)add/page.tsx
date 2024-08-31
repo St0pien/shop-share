@@ -1,4 +1,4 @@
-import { AddSpaceDialog } from '@/app/add/_components/AddSpaceDialog';
+import { AddSpaceDialog } from "@/components/dialogs/AddSpaceDialog";
 
 export default function TestIntercept() {
   return <AddSpaceDialog />;

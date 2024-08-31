@@ -1,6 +1,6 @@
 'use client';
 
-import { DeleteSpaceDialog } from '@/app/delete/[space]/_components/DeleteSpaceDialog';
+import { DeleteSpaceDialog } from '@/components/dialogs/DeleteSpaceDialog';
 import { api } from '@/trpc/react';
 
 export function DeleteSpaceClient({ spaceId }: { spaceId: string }) {

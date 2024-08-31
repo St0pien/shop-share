@@ -1,8 +1,7 @@
-import { DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
-import { type ReactNode } from 'react';
+import { type ReactNode, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export interface StandardDialogBasicProps {
   open?: boolean;
@@ -29,25 +28,34 @@ export function StandardDialog({
 }: StandardDialogProps) {
   const router = useRouter();
 
-  const closeDialog = () => {
+  const closeDialog = useCallback(() => {
     if (returnUrl === undefined) {
       router.back();
     } else {
       router.push(returnUrl);
     }
-  };
+  }, [returnUrl, router]);
 
-  const onOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      closeDialog();
-    }
-  };
+  const onOpenChange = useCallback(
+    (isOpen: boolean) => {
+      if (!isOpen) {
+        closeDialog();
+      }
+    },
+    [closeDialog]
+  );
 
   const onInteractOutside = (e: Event) => {
     if (disableOutsideInteraction) {
       e.preventDefault();
     }
   };
+
+  useEffect(() => {
+    if (!open) {
+      closeDialog();
+    }
+  }, [open, closeDialog]);
 
   return (
     <div>

@@ -14,7 +14,7 @@ export default function DeleteSpacePage({
 
   return (
     <HydrateClient>
-      <DeleteSpaceClient spaceId={spaceId} />;
+      <DeleteSpaceClient spaceId={spaceId} />
     </HydrateClient>
   );
 }

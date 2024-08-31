@@ -11,7 +11,7 @@ import { Spinner } from '@/components/svg/Spinner';
 import {
   StandardDialog,
   type StandardDialogExtProps
-} from '@/components/StandardDialog';
+} from '@/components/dialogs/StandardDialog';
 
 interface Props {
   space: SpaceInfo;
@@ -54,7 +54,7 @@ export function DeleteSpaceDialog({
                 <ShoppingCart className='text-primary' /> {space.itemsQuantity}
               </div>
               <div className='flex gap-2'>
-                <LayoutGrid className='text-primary' />{' '}
+                <LayoutGrid className='text-primary' />
                 {space.categoriesQuantity}
               </div>
               <div className='flex gap-2'>

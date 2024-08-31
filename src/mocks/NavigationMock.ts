@@ -9,16 +9,17 @@ import { vi } from 'vitest';
 
 class NavigationMock {
   public url: URL;
+  public router: AppRouterInstance;
   private readonly _base = 'https://example.com/';
 
   constructor() {
     this.url = new URL(this._base);
-  }
-
-  get router(): AppRouterInstance {
-    return {
+    this.router = {
       replace: (path: string) => {
         this.url = new URL(`${this._base}${path}`);
+      },
+      back: () => {
+        // empty
       }
     } as AppRouterInstance;
   }
