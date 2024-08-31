@@ -19,7 +19,7 @@ import {
 import { api } from '@/trpc/react';
 import { Spinner } from '@/components/svg/Spinner';
 
-import { StandardDialog, type StandardDialogExtProps } from './StandardDialog';
+import { StandardDialog, type StandardDialogExtProps } from '../StandardDialog';
 
 const createSpaceSchema = z.object({
   name: z

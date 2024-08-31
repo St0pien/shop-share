@@ -32,7 +32,7 @@ export default async function HomePage() {
         </div>
       </div>
       <div className='fixed bottom-32 right-8 z-20'>
-        <AddLink href='/add' />
+        <AddLink href='/add' prefetch />
       </div>
     </HydrateClient>
   );

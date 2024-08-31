@@ -6,6 +6,8 @@ import { type ChangeEventHandler, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 
+// TODO: Fix not updating after route change
+
 export function SearchBar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();

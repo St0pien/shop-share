@@ -34,6 +34,12 @@ export function StandardDialog({
 }: StandardDialogProps) {
   const router = useRouter();
 
+  useEffect(() => {
+    if (returnUrl !== undefined) {
+      router.prefetch(returnUrl);
+    }
+  }, [returnUrl, router]);
+
   const closeDialog = useCallback(() => {
     if (returnUrl === undefined) {
       router.back();

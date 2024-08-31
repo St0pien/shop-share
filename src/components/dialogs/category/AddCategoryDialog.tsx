@@ -1,6 +1,5 @@
 'use client';
 
-import { DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
 import { useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,13 +7,7 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 
-import { AddTrigger } from '@/components/buttons/AddTrigger';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader
-} from '@/components/ui/dialog';
+import { DialogClose, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -27,6 +20,8 @@ import {
 import { api } from '@/trpc/react';
 import { uuidTranslator } from '@/lib/uuidTranslator';
 
+import { StandardDialog, type StandardDialogExtProps } from '../StandardDialog';
+
 const createCategorySchema = z.object({
   name: z
     .string()
@@ -34,8 +29,8 @@ const createCategorySchema = z.object({
     .max(255, { message: 'Too long name' })
 });
 
-export function AddCategoryDialog() {
-  const [isOpen, setIsOpen] = useState(false);
+export function AddCategoryDialog(props: StandardDialogExtProps) {
+  const [isOpen, setIsOpen] = useState(true);
 
   const { space: shortSpaceId } = useParams<{ space: string }>();
 
@@ -96,51 +91,41 @@ export function AddCategoryDialog() {
   };
 
   return (
-    <div>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <AddTrigger />
-        <DialogContent className='top-1/3 w-4/5 rounded-xl outline-none'>
-          <DialogHeader>
-            <DialogTitle className='text-2xl font-bold'>
-              Create category
-            </DialogTitle>
-            <DialogDescription className='text-sm text-neutral-light'>
-              Category groups together shopping items
-            </DialogDescription>
-          </DialogHeader>
-          <Form {...createCategoryForm}>
-            <form
-              className='flex flex-col gap-8'
-              onSubmit={createCategoryForm.handleSubmit(submitHandler)}
-            >
-              <FormField
-                control={createCategoryForm.control}
-                name='name'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input id='space-name' placeholder='Name' {...field} />
-                    </FormControl>
-                    <FormMessage className='dark:text-red-600' />
-                  </FormItem>
-                )}
-              ></FormField>
-              <DialogFooter>
-                <div className='flex justify-between'>
-                  <Button
-                    type='button'
-                    variant='secondary'
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button>Save</Button>
-                </div>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-    </div>
+    <StandardDialog
+      open={isOpen}
+      title='Create category'
+      description='Category groups together shopping items'
+      {...props}
+    >
+      <Form {...createCategoryForm}>
+        <form
+          className='flex flex-col gap-8'
+          onSubmit={createCategoryForm.handleSubmit(submitHandler)}
+        >
+          <FormField
+            control={createCategoryForm.control}
+            name='name'
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input id='space-name' placeholder='Name' {...field} />
+                </FormControl>
+                <FormMessage className='dark:text-red-600' />
+              </FormItem>
+            )}
+          ></FormField>
+          <DialogFooter>
+            <div className='flex justify-between'>
+              <DialogClose asChild>
+                <Button type='button' variant='secondary'>
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button>Save</Button>
+            </div>
+          </DialogFooter>
+        </form>
+      </Form>
+    </StandardDialog>
   );
 }

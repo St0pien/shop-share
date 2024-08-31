@@ -1,9 +1,8 @@
 import { LayoutGrid, ListChecks, ShoppingCart, Users } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { DialogClose } from '@radix-ui/react-dialog';
 
-import { DialogFooter } from '@/components/ui/dialog';
+import { DialogClose, DialogFooter } from '@/components/ui/dialog';
 import { type SpaceInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { api } from '@/trpc/react';
