@@ -1,7 +1,13 @@
 import { type ReactNode, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
 
 export interface StandardDialogBasicProps {
   open?: boolean;

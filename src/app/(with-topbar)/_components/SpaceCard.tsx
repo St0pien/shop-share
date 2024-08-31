@@ -45,6 +45,7 @@ export function SpaceCard({ spaceInfo }: SpaceCardProps) {
           <ShareSpaceDialog space={spaceInfo} />
           <DeleteLink
             href={`/delete/${uuidTranslator.fromUUID(spaceInfo.id)}`}
+            prefetch
           />
         </div>
       </div>
