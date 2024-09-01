@@ -1,14 +1,17 @@
-import { type SpaceInfo } from './types';
+import { type CategoryInfo, type SpaceInfo } from './types';
 
-interface Order<T> {
+export interface Order<T> {
   url: string;
   display: string;
   comparator: (a: T, b: T) => number;
 }
 
-function getOrdersByUrl<T>(
-  orders: Order<T>[]
-): Record<string, Pick<Order<T>, 'comparator' | 'display'>> {
+export type OrdersByUrl<T> = Record<
+  string,
+  Pick<Order<T>, 'comparator' | 'display'>
+>;
+
+function getOrdersByUrl<T>(orders: Order<T>[]): OrdersByUrl<T> {
   return orders.reduce(
     (acc, { url, display, comparator }) => ({
       ...acc,
@@ -18,7 +21,7 @@ function getOrdersByUrl<T>(
   );
 }
 
-export const spaceOrders: Order<SpaceInfo>[] = [
+export const standardOrders: Order<SpaceInfo | CategoryInfo>[] = [
   {
     url: 'a-z',
     display: 'A-Z',
@@ -41,4 +44,4 @@ export const spaceOrders: Order<SpaceInfo>[] = [
   }
 ];
 
-export const spaceOrdersByUrl = getOrdersByUrl(spaceOrders);
+export const standardOrdersByUrl = getOrdersByUrl(standardOrders);

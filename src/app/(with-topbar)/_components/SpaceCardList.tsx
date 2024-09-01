@@ -1,13 +1,11 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-import { useMemo } from 'react';
-import Fuse from 'fuse.js';
+import { useEffect } from 'react';
 
 import { api } from '@/trpc/react';
-import { spaceOrdersByUrl } from '@/lib/order';
-import { type SpaceInfo } from '@/lib/types';
+import { standardOrdersByUrl } from '@/lib/order';
 import { useScrollTopOnChange } from '@/lib/hooks/scrollTop';
+import { useProcessedRecords } from '@/lib/hooks/useProcessedRecords';
 
 import { SpaceCard } from './SpaceCard';
 
@@ -15,36 +13,17 @@ export function SpaceCardList() {
   const [spaces] = api.spaces.fetch.useSuspenseQuery();
 
   const utils = api.useUtils();
-  spaces.forEach(space => {
-    utils.spaces.get.setData(space.id, space);
+  useEffect(() => {
+    spaces.forEach(space => {
+      utils.spaces.get.setData(space.id, space);
+    });
+  }, [spaces, utils.spaces.get]);
+
+  const processedSpaces = useProcessedRecords({
+    data: spaces,
+    searchKeys: ['name'],
+    orders: standardOrdersByUrl
   });
-
-  const fuse = useMemo(
-    () =>
-      new Fuse(spaces, {
-        keys: ['name'],
-        ignoreLocation: true
-      }),
-    [spaces]
-  );
-
-  const searchParams = useSearchParams();
-  const searchText = searchParams.get('search');
-
-  let processedSpaces: SpaceInfo[];
-
-  if (searchText !== null) {
-    processedSpaces = fuse.search(searchText).map(({ item }) => item);
-  } else {
-    processedSpaces = [...spaces];
-
-    const orderParam = searchParams.get('order') ?? '';
-    const order = spaceOrdersByUrl[orderParam];
-
-    if (order !== undefined) {
-      processedSpaces.sort(order.comparator);
-    }
-  }
 
   const scrollContainer = useScrollTopOnChange<HTMLDivElement>(processedSpaces);
 

@@ -46,10 +46,16 @@ export function OrderSelect({ orderSelectItems }: Props) {
     i => i.url === orderParam
   )?.display;
 
+  const disabled = searchParams.has('search');
+
   return (
-    <div className='flex w-full items-center gap-2'>
-      <Label className='text-neutral-light'>Order:</Label>
-      <Select defaultValue={selectedOption} onValueChange={onSwitch}>
+    <div className='flex w-full items-center gap-6'>
+      <Label className='text-neutral-light'>Order: </Label>
+      <Select
+        disabled={disabled}
+        defaultValue={selectedOption}
+        onValueChange={onSwitch}
+      >
         <SelectTrigger
           className='focus: ring-offset-0 focus:ring-0'
           data-testid='order-select'
