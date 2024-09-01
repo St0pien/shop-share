@@ -2,11 +2,9 @@
 
 import { SearchIcon, X } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { type ChangeEventHandler, useState } from 'react';
+import { type ChangeEventHandler, useEffect, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
-
-// TODO: Fix not updating after route change
 
 export function SearchBar() {
   const pathname = usePathname();
@@ -16,6 +14,10 @@ export function SearchBar() {
   const [searchText, setSearchText] = useState(
     searchParams.get('search') ?? ''
   );
+
+  useEffect(() => {
+    setSearchText(searchParams.get('search') ?? '');
+  }, [pathname, searchParams]);
 
   const updateSearchParams = (text: string) => {
     let url = pathname;
