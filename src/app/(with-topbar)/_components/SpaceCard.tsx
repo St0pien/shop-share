@@ -11,18 +11,12 @@ interface SpaceCardProps {
   spaceInfo: SpaceInfo;
 }
 
-// TODO: Reimplement layout to better fit longer names
-
 export function SpaceCard({ spaceInfo }: SpaceCardProps) {
   return (
-    <div className='relative w-5/6 rounded-lg bg-neutral-dark p-4'>
-      <div className='flex w-full justify-between gap-2'>
-        <h2 className='overflow-x-auto text-2xl font-bold'>{spaceInfo.name}</h2>
-        <p className='shrink-0 text-sm text-neutral-light'>
-          {spaceInfo.createdAt.toLocaleDateString()}
-        </p>
-      </div>
-      <div className='grid grid-cols-[80%_1fr] py-6'>
+    <div className='relative flex w-5/6 flex-col rounded-lg bg-neutral-dark p-4'>
+      <h2 className='break-all text-3xl font-bold'>{spaceInfo.name}</h2>
+
+      <div className='grid grid-cols-[80%_1fr] pt-6'>
         <div className='flex w-4/5 flex-col gap-2'>
           <div className='flex gap-4'>
             <ListChecks className='text-primary' />
@@ -40,6 +34,10 @@ export function SpaceCard({ spaceInfo }: SpaceCardProps) {
             <Users className='text-primary' />
             <p>{spaceInfo.membersQuantity} members</p>
           </div>
+
+          <p className='shrink-0 text-sm text-neutral-light'>
+            Created at {spaceInfo.createdAt.toLocaleDateString()}
+          </p>
         </div>
         <div className='z-10 flex h-full w-full flex-col items-center justify-end gap-4'>
           <ShareSpaceDialog space={spaceInfo} />
