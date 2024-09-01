@@ -7,7 +7,7 @@ import Fuse from 'fuse.js';
 import { api } from '@/trpc/react';
 import { spaceOrdersByUrl } from '@/lib/order';
 import { type SpaceInfo } from '@/lib/types';
-import { useScrollTop } from '@/lib/hooks';
+import { useScrollTopOnChange } from '@/lib/hooks/scrollTop';
 
 import { SpaceCard } from './SpaceCard';
 
@@ -46,17 +46,19 @@ export function SpaceCardList() {
     }
   }
 
-  const scrollAnchor = useScrollTop<HTMLDivElement>(processedSpaces);
+  const scrollContainer = useScrollTopOnChange<HTMLDivElement>(processedSpaces);
 
   return (
-    <div ref={scrollAnchor} className='flex w-full flex-col items-center gap-8'>
-      {processedSpaces.length === 0 && (
-        <p className='text-xl text-neutral-light'>No spaces found</p>
-      )}
-      {processedSpaces.map(space => (
-        <SpaceCard key={space.id} spaceInfo={space} />
-      ))}
-      <div className='h-48'></div>
+    <div ref={scrollContainer} className='h-full w-full overflow-y-auto'>
+      <div className='flex w-full flex-col items-center gap-8'>
+        {processedSpaces.length === 0 && (
+          <p className='text-xl text-neutral-light'>No spaces found</p>
+        )}
+        {processedSpaces.map(space => (
+          <SpaceCard key={space.id} spaceInfo={space} />
+        ))}
+        <div className='h-48'></div>
+      </div>
     </div>
   );
 }

@@ -25,11 +25,9 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className='h-full w-full overflow-y-auto'>
-          <Suspense fallback={<WrappedSpinner />}>
-            <SpaceCardList />
-          </Suspense>
-        </div>
+        <Suspense fallback={<WrappedSpinner />}>
+          <SpaceCardList />
+        </Suspense>
       </div>
       <div className='fixed bottom-32 right-8 z-20'>
         <AddLink href='/add' prefetch />
