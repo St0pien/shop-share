@@ -7,6 +7,7 @@ import Fuse from 'fuse.js';
 import { api } from '@/trpc/react';
 import { spaceOrdersByUrl } from '@/lib/order';
 import { type SpaceInfo } from '@/lib/types';
+import { useScrollTop } from '@/lib/hooks';
 
 import { SpaceCard } from './SpaceCard';
 
@@ -45,8 +46,10 @@ export function SpaceCardList() {
     }
   }
 
+  const scrollAnchor = useScrollTop<HTMLDivElement>(processedSpaces);
+
   return (
-    <div className='flex w-full flex-col items-center gap-8'>
+    <div ref={scrollAnchor} className='flex w-full flex-col items-center gap-8'>
       {processedSpaces.length === 0 && (
         <p className='text-xl text-neutral-light'>No spaces found</p>
       )}

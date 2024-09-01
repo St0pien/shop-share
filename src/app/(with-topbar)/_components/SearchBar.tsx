@@ -6,8 +6,6 @@ import { type ChangeEventHandler, useEffect, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 
-// TODO: Scroll top on search
-
 export function SearchBar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
