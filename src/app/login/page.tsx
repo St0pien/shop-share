@@ -6,9 +6,6 @@ import { auth } from '@/server/auth';
 
 import { GoogleOauthButton } from './_components/GoogleOauthButton';
 
-// TODO: Improve sizing of login page
-// TODO: Check login redirects
-
 const DynamicThemeSwitch = dynamic(
   () => import('@/components/ThemeSwitch').then(mod => mod.ThemeSwitch),
   {
@@ -24,11 +21,11 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className='h-screen w-screen'>
+    <div className='h-dvh w-screen'>
       <div className='flex h-2/5 w-full flex-col items-center justify-end'>
         <Logo />
       </div>
-      <div className='flex h-3/5 w-full flex-col items-center gap-32 py-32'>
+      <div className='flex h-3/5 w-full flex-col items-center justify-between py-32'>
         <div>
           <GoogleOauthButton />
         </div>
