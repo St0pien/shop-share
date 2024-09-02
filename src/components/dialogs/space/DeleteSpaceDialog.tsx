@@ -45,7 +45,9 @@ export function DeleteSpaceDialog({
       {!isPending ? (
         <>
           <div className='flex flex-col items-center'>
-            <p className='text-lg text-primary'>{space.name}</p>
+            <p className='break-all text-center text-lg text-primary'>
+              {space.name}
+            </p>
             <p className='text-muted-foreground'>with: </p>
             <div className='flex w-full justify-between pt-4'>
               <div className='flex gap-2'>

@@ -70,7 +70,9 @@ export function DeleteCategoryDialog({
       {!isPending ? (
         <>
           <div className='flex flex-col items-center'>
-            <p className='text-lg text-primary'>{category.name}</p>
+            <p className='break-all text-center text-lg text-primary'>
+              {category.name}
+            </p>
             <p className='pt-4 text-muted-foreground'>
               This will reset category on
             </p>
