@@ -6,6 +6,7 @@ import { categories, items } from '@/server/db/schema';
 import { ErrorMessage } from '@/lib/ErrorMessage';
 import { checkAccessSpaceMember } from '@/server/lib/access/space';
 import { checkAccessCategory } from '@/server/lib/access/category';
+import { categoryIdSchema, categoryNameSchema } from '@/lib/schemas/categories';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -66,7 +67,7 @@ export const categoriesRouter = createTRPCRouter({
     }),
 
   get: protectedProcedure
-    .input(z.number().int().positive())
+    .input(categoryIdSchema)
     .query(async ({ ctx, input: categoryId }) => {
       await checkAccessCategory({
         db: ctx.db,
@@ -98,7 +99,7 @@ export const categoriesRouter = createTRPCRouter({
     }),
 
   delete: protectedProcedure
-    .input(z.number().int().positive())
+    .input(categoryIdSchema)
     .mutation(async ({ ctx, input: categoryId }) => {
       const [result] = await ctx.db
         .select({ spaceId: categories.spaceId })
@@ -119,5 +120,22 @@ export const categoriesRouter = createTRPCRouter({
       });
 
       await ctx.db.delete(categories).where(eq(categories.id, categoryId));
+    }),
+
+  update: protectedProcedure
+    .input(z.object({ id: categoryIdSchema, name: categoryNameSchema }))
+    .mutation(async ({ ctx, input }) => {
+      await checkAccessCategory({
+        db: ctx.db,
+        categoryId: input.id,
+        userId: ctx.session.user.id
+      });
+
+      await ctx.db
+        .update(categories)
+        .set({
+          name: input.name
+        })
+        .where(eq(categories.id, input.id));
     })
 });

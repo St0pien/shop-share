@@ -1,17 +1,21 @@
-import { DeleteCategoryWrapper } from '@/components/dialogs/category/DeleteCategoryWrapper';
+import { EditCategoryWrapper } from '@/components/dialogs/category/EditCategoryWrapper';
 import { api, HydrateClient } from '@/trpc/server';
 
-export default function DeleteCategoryPage({
+export default function EditCategoryPage({
   params
 }: {
-  params: { category: string; space: string };
+  params: {
+    category: string;
+    space: string;
+  };
 }) {
   const categoryId = Number(params.category);
+
   void api.categories.get.prefetch(categoryId);
 
   return (
     <HydrateClient>
-      <DeleteCategoryWrapper
+      <EditCategoryWrapper
         categoryId={categoryId}
         returnUrl={`/space/${params.space}/categories`}
       />

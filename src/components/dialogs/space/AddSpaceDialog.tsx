@@ -18,14 +18,12 @@ import {
 } from '@/components/ui/form';
 import { api } from '@/trpc/react';
 import { Spinner } from '@/components/svg/Spinner';
+import { spaceNameSchema } from '@/lib/schemas/spaces';
 
 import { StandardDialog, type StandardDialogExtProps } from '../StandardDialog';
 
 const createSpaceSchema = z.object({
-  name: z
-    .string()
-    .min(1, { message: 'Name cannot be empty' })
-    .max(255, { message: 'Too long name' })
+  name: spaceNameSchema
 });
 
 export function AddSpaceDialog(props: StandardDialogExtProps) {

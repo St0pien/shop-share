@@ -50,8 +50,8 @@ export async function checkAccessSpaceMember(params: SpaceAccessParams) {
 
   if (!isMember) {
     throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: ErrorMessage.ACCESS_DENIED_MEMBER
+      code: 'NOT_FOUND',
+      message: ErrorMessage.SPACE_NOT_FOUND
     });
   }
 }

@@ -34,7 +34,7 @@ export function Navigation() {
   const { space: spaceId } = useParams<{ space: string }>();
 
   return (
-    <div className='flex h-full items-center justify-between bg-neutral-dark px-2'>
+    <div className='z-20 flex h-full items-center justify-between bg-neutral-dark px-2'>
       {routes.map(({ path, title, icon: Icon }) => (
         <Link
           className={cn(

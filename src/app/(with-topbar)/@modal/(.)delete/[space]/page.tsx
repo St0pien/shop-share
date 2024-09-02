@@ -1,7 +1,6 @@
+import { DeleteSpaceWrapper } from '@/components/dialogs/space/DeleteSpaceWrapper';
 import { uuidTranslator } from '@/lib/uuidTranslator';
 import { api, HydrateClient } from '@/trpc/server';
-
-import { DeleteSpaceClient } from './DeleteSpaceClient';
 
 export default function DeleteSpacePage({
   params
@@ -9,12 +8,11 @@ export default function DeleteSpacePage({
   params: { space: string };
 }) {
   const spaceId = uuidTranslator.toUUID(params.space);
-
   void api.spaces.get.prefetch(spaceId);
 
   return (
     <HydrateClient>
-      <DeleteSpaceClient spaceId={spaceId} />
+      <DeleteSpaceWrapper spaceId={spaceId} />
     </HydrateClient>
   );
 }

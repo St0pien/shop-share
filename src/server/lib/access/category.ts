@@ -32,8 +32,8 @@ export async function checkAccessCategory({
 
   if (result === undefined) {
     throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: ErrorMessage.ACCESS_DENIED_MEMBER
+      code: 'NOT_FOUND',
+      message: ErrorMessage.CATEGORY_NOT_FOUND
     });
   }
 }

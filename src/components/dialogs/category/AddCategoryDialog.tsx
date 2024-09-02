@@ -19,14 +19,12 @@ import {
 } from '@/components/ui/form';
 import { api } from '@/trpc/react';
 import { uuidTranslator } from '@/lib/uuidTranslator';
+import { categoryNameSchema } from '@/lib/schemas/categories';
 
 import { StandardDialog, type StandardDialogExtProps } from '../StandardDialog';
 
 const createCategorySchema = z.object({
-  name: z
-    .string()
-    .min(1, { message: 'Name cannot be empty' })
-    .max(255, { message: 'Too long name' })
+  name: categoryNameSchema
 });
 
 export function AddCategoryDialog(props: StandardDialogExtProps) {
