@@ -30,6 +30,9 @@ export function CategoryCardList({ spaceId }: Props) {
 
   return (
     <div className='flex w-full flex-col items-center gap-4'>
+      {processedCategories.length === 0 && (
+        <p className='text-xl text-neutral-light'>No categories found</p>
+      )}
       {processedCategories.map(category => (
         <CategoryCard key={category.id} categoryInfo={category} />
       ))}
