@@ -14,10 +14,12 @@ interface SpaceNameProps {
   spaceId: string;
 }
 
-// TODO: hanel long names
-
 async function SpaceName({ spaceId }: SpaceNameProps) {
   const { spaceName } = await api.spaces.getName(spaceId);
+
+  if (spaceName.length > 23) {
+    return spaceName.slice(0, 20) + '...';
+  }
 
   return spaceName;
 }
