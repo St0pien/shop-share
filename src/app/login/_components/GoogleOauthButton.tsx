@@ -11,7 +11,6 @@ export function GoogleOauthButton() {
 
   const login = async () => {
     const callbackUrl = searchParams.get('callback') ?? '/';
-    alert(callbackUrl);
 
     await signIn('google', { callbackUrl });
   };

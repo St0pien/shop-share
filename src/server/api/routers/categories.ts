@@ -4,8 +4,11 @@ import { count, eq } from 'drizzle-orm';
 
 import { categories, items } from '@/server/db/schema';
 import { ErrorMessage } from '@/lib/ErrorMessage';
-import { checkAccessSpaceMember } from '@/server/lib/access/space';
-import { checkAccessCategory } from '@/server/lib/access/category';
+import { checkSpaceAccess, getSpaceAccess } from '@/server/lib/access/space';
+import {
+  checkCategoryAccess,
+  getCategoryAccess
+} from '@/server/lib/access/category';
 import { categoryIdSchema, categoryNameSchema } from '@/lib/schemas/categories';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
@@ -19,11 +22,13 @@ export const categoriesRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      await checkAccessSpaceMember({
+      const access = await getSpaceAccess({
         db: ctx.db,
         userId: ctx.session.user.id,
         spaceId: input.spaceId
       });
+
+      checkSpaceAccess(access, 'member');
 
       const [category] = await ctx.db
         .insert(categories)
@@ -46,11 +51,13 @@ export const categoriesRouter = createTRPCRouter({
   fetch: protectedProcedure
     .input(z.string().uuid())
     .query(async ({ ctx, input: spaceId }) => {
-      await checkAccessSpaceMember({
+      const access = await getSpaceAccess({
         db: ctx.db,
         userId: ctx.session.user.id,
-        spaceId: spaceId
+        spaceId
       });
+
+      checkSpaceAccess(access, 'member');
 
       return ctx.db
         .select({
@@ -69,11 +76,13 @@ export const categoriesRouter = createTRPCRouter({
   get: protectedProcedure
     .input(categoryIdSchema)
     .query(async ({ ctx, input: categoryId }) => {
-      await checkAccessCategory({
+      const access = await getCategoryAccess({
         db: ctx.db,
         userId: ctx.session.user.id,
         categoryId
       });
+
+      checkCategoryAccess(access, 'member');
 
       const [categoryInfo] = await ctx.db
         .select({
@@ -101,23 +110,13 @@ export const categoriesRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(categoryIdSchema)
     .mutation(async ({ ctx, input: categoryId }) => {
-      const [result] = await ctx.db
-        .select({ spaceId: categories.spaceId })
-        .from(categories)
-        .where(eq(categories.id, categoryId));
-
-      if (result === undefined) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: ErrorMessage.CATEGORY_NOT_FOUND
-        });
-      }
-
-      await checkAccessSpaceMember({
+      const access = await getCategoryAccess({
         db: ctx.db,
         userId: ctx.session.user.id,
-        spaceId: result.spaceId
+        categoryId
       });
+
+      checkCategoryAccess(access, 'member');
 
       await ctx.db.delete(categories).where(eq(categories.id, categoryId));
     }),
@@ -125,11 +124,13 @@ export const categoriesRouter = createTRPCRouter({
   update: protectedProcedure
     .input(z.object({ id: categoryIdSchema, name: categoryNameSchema }))
     .mutation(async ({ ctx, input }) => {
-      await checkAccessCategory({
+      const access = await getCategoryAccess({
         db: ctx.db,
-        categoryId: input.id,
-        userId: ctx.session.user.id
+        userId: ctx.session.user.id,
+        categoryId: input.id
       });
+
+      checkCategoryAccess(access, 'member');
 
       await ctx.db
         .update(categories)

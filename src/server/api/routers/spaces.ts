@@ -12,11 +12,7 @@ import {
   users
 } from '@/server/db/schema';
 import { getSignedId, verifySignedId } from '@/server/lib/jwt';
-import {
-  checkAccessSpaceAdmin,
-  checkAccessSpaceMember,
-  isSpaceMember
-} from '@/server/lib/access/space';
+import { checkSpaceAccess, getSpaceAccess } from '@/server/lib/access/space';
 import { ErrorMessage } from '@/lib/ErrorMessage';
 import { spaceIdSchema, spaceNameSchema } from '@/lib/schemas/spaces';
 
@@ -91,11 +87,13 @@ export const spacesRouter = createTRPCRouter({
   get: protectedProcedure
     .input(spaceIdSchema)
     .query(async ({ ctx, input: spaceId }) => {
-      await checkAccessSpaceMember({
+      const access = await getSpaceAccess({
         db: ctx.db,
         userId: ctx.session.user.id,
-        spaceId: spaceId
+        spaceId
       });
+
+      checkSpaceAccess(access, 'member');
 
       const [spaceInfo] = await ctx.db
         .select({
@@ -128,35 +126,31 @@ export const spacesRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(spaceIdSchema)
     .mutation(async ({ ctx, input: spaceId }) => {
-      await checkAccessSpaceAdmin({
+      const access = await getSpaceAccess({
         db: ctx.db,
         userId: ctx.session.user.id,
         spaceId
       });
 
-      const [deletedSpace] = await ctx.db
-        .delete(spaces)
-        .where(eq(spaces.id, spaceId))
-        .returning();
+      checkSpaceAccess(access, 'admin');
 
-      if (deletedSpace === undefined) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: ErrorMessage.SPACE_NOT_FOUND
-        });
-      }
-
-      return deletedSpace;
+      await ctx.db.delete(spaces).where(eq(spaces.id, spaceId)).returning();
     }),
   generateInvite: protectedProcedure
     .input(spaceIdSchema)
     .mutation(async ({ ctx, input: spaceId }) => {
+      const access = await getSpaceAccess({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        spaceId
+      });
+
+      checkSpaceAccess(access, 'admin');
+
       const rows = await ctx.db
         .select()
         .from(spaces)
-        .where(
-          and(eq(spaces.id, spaceId), eq(spaces.admin, ctx.session.user.id))
-        );
+        .where(eq(spaces.id, spaceId));
 
       if (rows.length !== 1) {
         throw new TRPCError({
@@ -182,7 +176,7 @@ export const spacesRouter = createTRPCRouter({
         throw error;
       });
 
-      const isMember = await isSpaceMember({
+      const { isMember } = await getSpaceAccess({
         db: ctx.db,
         userId: ctx.session.user.id,
         spaceId
@@ -239,11 +233,13 @@ export const spacesRouter = createTRPCRouter({
   getName: protectedProcedure
     .input(spaceIdSchema)
     .query(async ({ ctx, input: spaceId }) => {
-      await checkAccessSpaceMember({
+      const access = await getSpaceAccess({
         db: ctx.db,
         userId: ctx.session.user.id,
         spaceId
       });
+
+      checkSpaceAccess(access, 'member');
 
       const [spaceName] = await ctx.db
         .select({ spaceName: spaces.name })

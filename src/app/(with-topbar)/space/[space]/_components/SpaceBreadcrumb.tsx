@@ -14,6 +14,8 @@ interface SpaceNameProps {
   spaceId: string;
 }
 
+// TODO: hanel long names
+
 async function SpaceName({ spaceId }: SpaceNameProps) {
   const { spaceName } = await api.spaces.getName(spaceId);
 

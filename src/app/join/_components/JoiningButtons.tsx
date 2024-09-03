@@ -7,13 +7,14 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { api } from '@/trpc/react';
 import { Spinner } from '@/components/svg/Spinner';
+import { uuidTranslator } from '@/lib/uuidTranslator';
 
 interface Props {
   token: string;
 }
 
 export function JoiningButtons({ token }: Props) {
-  const [spaceDetails] = api.spaces.getInviteInfo.useSuspenseQuery(token);
+  const [spaceInfo] = api.spaces.getInviteInfo.useSuspenseQuery(token);
 
   const router = useRouter();
   const { mutate: joinSpace, isPending } =
@@ -23,17 +24,17 @@ export function JoiningButtons({ token }: Props) {
         toast.error(error.message);
       },
       onSuccess: () => {
-        router.replace(`/space/jsdf`);
-        toast.success(`You have joined ${spaceDetails.name}`);
+        router.replace(`/space/${uuidTranslator.fromUUID(spaceInfo.id)}`);
+        toast.success(`You have joined ${spaceInfo.name}`);
       }
     });
 
   return (
     <div className='absolute top-1/4 w-full px-8'>
       <h1 className='text-center text-2xl font-bold'>
-        <span className='text-primary'>{spaceDetails.adminName}</span> invites
-        you to their shop space{' '}
-        <span className='text-primary'>{spaceDetails.name}</span>
+        <span className='text-primary'>{spaceInfo.adminName}</span> invites you
+        to their shop space{' '}
+        <span className='text-primary'>{spaceInfo.name}</span>
       </h1>
       {!isPending ? (
         <>
