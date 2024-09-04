@@ -59,7 +59,7 @@ export function CategoryCombobox({ spaceId, value, onChange }: Props) {
       </PopoverTrigger>
       <PopoverContent className='w-64 p-0' avoidCollisions={false}>
         <Command>
-          <CommandInput placeholder='Search framework...' />
+          <CommandInput placeholder='Search category...' />
           <CommandList>
             <ScrollArea>
               <CommandEmpty>
