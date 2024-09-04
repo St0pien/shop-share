@@ -23,7 +23,7 @@ export function ItemCardList({ spaceId }: Props) {
   return (
     <div className='flex w-full flex-col items-center gap-4'>
       {processedItems.length === 0 && (
-        <p className='text-xl text-neutral-light'>No spaces found</p>
+        <p className='text-xl text-neutral-light'>No items found</p>
       )}
       {processedItems.map(item => (
         <ItemCard key={item.id} itemInfo={item} />
