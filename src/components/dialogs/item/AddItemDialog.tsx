@@ -19,15 +19,15 @@ import {
 } from '@/components/ui/form';
 import { api } from '@/trpc/react';
 import { uuidTranslator } from '@/lib/uuidTranslator';
-import { categoryNameSchema } from '@/lib/schemas/category';
+import { itemNameSchema } from '@/lib/schemas/item';
 
 import { StandardDialog, type StandardDialogExtProps } from '../StandardDialog';
 
-const createCategorySchema = z.object({
-  name: categoryNameSchema
+const createItemSchema = z.object({
+  name: itemNameSchema
 });
 
-export function AddCategoryDialog(props: StandardDialogExtProps) {
+export function AddItemDialog(props: StandardDialogExtProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   const { space: shortSpaceId } = useParams<{ space: string }>();
@@ -36,53 +36,53 @@ export function AddCategoryDialog(props: StandardDialogExtProps) {
 
   const utils = api.useUtils();
 
-  const { mutate: createCategory } = api.category.create.useMutation({
-    onMutate: async ({ categoryName, spaceId }) => {
-      await utils.category.fetch.cancel(spaceId);
-      const previousCategories = utils.category.fetch.getData(spaceId);
+  const { mutate: createItem } = api.item.create.useMutation({
+    onMutate: async ({ itemName, spaceId }) => {
+      // await utils.item.fetch.cancel(spaceId);
+      const previousItems = utils.category.fetch.getData(spaceId);
 
-      const previousPart = previousCategories ?? [];
+      const previousPart = previousItems ?? [];
       const lastID =
         previousPart.length > 0 ? Math.max(...previousPart.map(c => c.id)) : 1;
 
       utils.category.fetch.setData(spaceId, [
-        ...(previousCategories ?? []),
+        ...(previousItems ?? []),
         {
           id: lastID + 1,
-          name: categoryName,
+          name: itemName,
           itemsQuantity: 0,
           createdAt: new Date(),
           spaceId
         }
       ]);
 
-      return { previousCategories };
+      return { previousItems };
     },
     onSettled: async () => {
-      await utils.category.fetch.invalidate(spaceId);
+      // await utils.item.fetch.invalidate(spaceId);
     },
     onError: (error, _, ctx) => {
       toast.error(error.message);
 
       if (ctx !== undefined) {
-        utils.category.fetch.setData(spaceId, ctx.previousCategories);
+        // utils.item.fetch.setData(spaceId, ctx.previousItems);
       }
     }
   });
 
-  const createCategoryForm = useForm<z.infer<typeof createCategorySchema>>({
-    resolver: zodResolver(createCategorySchema),
+  const createCategoryForm = useForm<z.infer<typeof createItemSchema>>({
+    resolver: zodResolver(createItemSchema),
     defaultValues: {
       name: ''
     },
     mode: 'onChange'
   });
 
-  const submitHandler: SubmitHandler<z.infer<typeof createCategorySchema>> = ({
+  const submitHandler: SubmitHandler<z.infer<typeof createItemSchema>> = ({
     name
   }) => {
-    createCategory({
-      categoryName: name,
+    createItem({
+      itemName: name,
       spaceId
     });
     setIsOpen(false);
@@ -92,8 +92,8 @@ export function AddCategoryDialog(props: StandardDialogExtProps) {
   return (
     <StandardDialog
       open={isOpen}
-      title='Create category'
-      description='Category groups together shopping items'
+      title='Create item'
+      description='Create items to compose them into shop lists'
       {...props}
     >
       <Form {...createCategoryForm}>

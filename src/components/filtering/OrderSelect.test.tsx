@@ -55,8 +55,4 @@ describe('OrderSelect', () => {
 
     expect(await screen.findByText(testOrders[1]!.display)).toBeVisible();
   });
-
-  // test('clears param if empty string', () => {});
-  //
-  // test('preserves other url query params', () => {});
 });

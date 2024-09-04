@@ -1,6 +1,5 @@
 import { type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { and, eq } from 'drizzle-orm';
-import { TRPCError } from '@trpc/server';
 
 import { ErrorMessage } from '@/lib/ErrorMessage';
 import * as schema from '@/server/db/schema';

@@ -75,7 +75,7 @@ export function AddSpaceDialog(props: StandardDialogExtProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input id='space-name' placeholder='Name' {...field} />
+                    <Input placeholder='Name' {...field} />
                   </FormControl>
                   <FormMessage className='dark:text-red-600' />
                 </FormItem>
