@@ -80,7 +80,7 @@ export function AddSpaceDialog(props: StandardDialogExtProps) {
                   <FormMessage className='dark:text-red-600' />
                 </FormItem>
               )}
-            ></FormField>
+            />
             <DialogFooter>
               <div className='flex justify-between'>
                 <DialogClose asChild>

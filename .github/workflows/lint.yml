@@ -1,4 +1,5 @@
 ---
+# TODO: Make warning errors
 name: Lint
 "on": push
 permissions:

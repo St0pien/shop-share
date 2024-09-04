@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { itemNameSchema } from '@/lib/schemas/item';
+import { categoryIdAssignmentSchema, itemNameSchema } from '@/lib/schemas/item';
 import { checkSpaceAccess, getSpaceAccess } from '@/server/lib/access/space';
 import { spaceIdSchema } from '@/lib/schemas/space';
 
@@ -11,7 +11,8 @@ export const itemRouter = createTRPCRouter({
     .input(
       z.object({
         spaceId: spaceIdSchema,
-        itemName: itemNameSchema
+        itemName: itemNameSchema,
+        categoryId: categoryIdAssignmentSchema
       })
     )
     .mutation(async ({ ctx, input }) => {

@@ -19,12 +19,14 @@ import {
 } from '@/components/ui/form';
 import { api } from '@/trpc/react';
 import { uuidTranslator } from '@/lib/uuidTranslator';
-import { itemNameSchema } from '@/lib/schemas/item';
+import { categoryIdAssignmentSchema, itemNameSchema } from '@/lib/schemas/item';
+import { CategoryCombobox } from '@/components/form-fields/CategoryCombobox';
 
 import { StandardDialog, type StandardDialogExtProps } from '../StandardDialog';
 
 const createItemSchema = z.object({
-  name: itemNameSchema
+  name: itemNameSchema,
+  categoryId: categoryIdAssignmentSchema
 });
 
 export function AddItemDialog(props: StandardDialogExtProps) {
@@ -70,7 +72,7 @@ export function AddItemDialog(props: StandardDialogExtProps) {
     }
   });
 
-  const createCategoryForm = useForm<z.infer<typeof createItemSchema>>({
+  const createItemForm = useForm<z.infer<typeof createItemSchema>>({
     resolver: zodResolver(createItemSchema),
     defaultValues: {
       name: ''
@@ -79,14 +81,16 @@ export function AddItemDialog(props: StandardDialogExtProps) {
   });
 
   const submitHandler: SubmitHandler<z.infer<typeof createItemSchema>> = ({
-    name
+    name,
+    categoryId
   }) => {
     createItem({
       itemName: name,
-      spaceId
+      spaceId,
+      categoryId
     });
     setIsOpen(false);
-    createCategoryForm.setValue('name', '');
+    createItemForm.setValue('name', '');
   };
 
   return (
@@ -96,13 +100,13 @@ export function AddItemDialog(props: StandardDialogExtProps) {
       description='Create items to compose them into shop lists'
       {...props}
     >
-      <Form {...createCategoryForm}>
+      <Form {...createItemForm}>
         <form
           className='flex flex-col gap-8'
-          onSubmit={createCategoryForm.handleSubmit(submitHandler)}
+          onSubmit={createItemForm.handleSubmit(submitHandler)}
         >
           <FormField
-            control={createCategoryForm.control}
+            control={createItemForm.control}
             name='name'
             render={({ field }) => (
               <FormItem>
@@ -112,7 +116,18 @@ export function AddItemDialog(props: StandardDialogExtProps) {
                 <FormMessage className='dark:text-red-600' />
               </FormItem>
             )}
-          ></FormField>
+          />
+          <FormField
+            control={createItemForm.control}
+            name='categoryId'
+            render={({ field }) => (
+              <CategoryCombobox
+                spaceId={spaceId}
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
           <DialogFooter>
             <div className='flex justify-between'>
               <DialogClose asChild>
