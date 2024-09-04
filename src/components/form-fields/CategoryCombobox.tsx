@@ -20,6 +20,8 @@ import {
 } from '@/components/ui/popover';
 import { api } from '@/trpc/react';
 
+import { ScrollArea } from '../ui/scroll-area';
+
 interface Props {
   spaceId: string;
   value?: number; // category id
@@ -59,35 +61,37 @@ export function CategoryCombobox({ spaceId, value, onChange }: Props) {
         <Command>
           <CommandInput placeholder='Search framework...' />
           <CommandList>
-            <CommandEmpty>
-              {isPending ? 'Loading ...' : 'No category found'}
-            </CommandEmpty>
-            <CommandGroup>
-              {categories?.map(category => (
-                <CommandItem
-                  key={category.id}
-                  value={category.name}
-                  onSelect={currentValue => {
-                    setCategoryName(
-                      currentValue === categoryName ? '' : currentValue
-                    );
-                    setOpen(false);
-                  }}
-                >
-                  <div className='flex items-center gap-2 overflow-hidden'>
-                    <Check
-                      className={cn(
-                        'h-4 w-4 shrink-0 text-primary',
-                        categoryName === category.name
-                          ? 'opacity-100'
-                          : 'opacity-0'
-                      )}
-                    />
-                    <p>{category.name}</p>
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
+            <ScrollArea>
+              <CommandEmpty>
+                {isPending ? 'Loading ...' : 'No category found'}
+              </CommandEmpty>
+              <CommandGroup>
+                {categories?.map(category => (
+                  <CommandItem
+                    key={category.id}
+                    value={category.name}
+                    onSelect={currentValue => {
+                      setCategoryName(
+                        currentValue === categoryName ? '' : currentValue
+                      );
+                      setOpen(false);
+                    }}
+                  >
+                    <div className='flex items-center gap-2 overflow-hidden'>
+                      <Check
+                        className={cn(
+                          'h-4 w-4 shrink-0 text-primary',
+                          categoryName === category.name
+                            ? 'opacity-100'
+                            : 'opacity-0'
+                        )}
+                      />
+                      <p>{category.name}</p>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </ScrollArea>
           </CommandList>
         </Command>
       </PopoverContent>
