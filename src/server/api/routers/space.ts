@@ -14,11 +14,11 @@ import {
 import { getSignedId, verifySignedId } from '@/server/lib/jwt';
 import { checkSpaceAccess, getSpaceAccess } from '@/server/lib/access/space';
 import { ErrorMessage } from '@/lib/ErrorMessage';
-import { spaceIdSchema, spaceNameSchema } from '@/lib/schemas/spaces';
+import { spaceIdSchema, spaceNameSchema } from '@/lib/schemas/space';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
-export const spacesRouter = createTRPCRouter({
+export const spaceRouter = createTRPCRouter({
   create: protectedProcedure
     .input(spaceNameSchema)
     .mutation(async ({ input, ctx }) => {

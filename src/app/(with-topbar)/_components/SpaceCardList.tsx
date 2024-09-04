@@ -10,14 +10,14 @@ import { useProcessedRecords } from '@/lib/hooks/useProcessedRecords';
 import { SpaceCard } from './SpaceCard';
 
 export function SpaceCardList() {
-  const [spaces] = api.spaces.fetch.useSuspenseQuery();
+  const [spaces] = api.space.fetch.useSuspenseQuery();
 
   const utils = api.useUtils();
   useEffect(() => {
     spaces.forEach(space => {
-      utils.spaces.get.setData(space.id, space);
+      utils.space.get.setData(space.id, space);
     });
-  }, [spaces, utils.spaces.get]);
+  }, [spaces, utils.space.get]);
 
   const processedSpaces = useProcessedRecords({
     data: spaces,

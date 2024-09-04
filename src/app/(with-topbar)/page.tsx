@@ -9,7 +9,7 @@ import { AddLink } from '@/components/buttons/AddLink';
 import { SpaceCardList } from './_components/SpaceCardList';
 
 export default async function HomePage() {
-  void api.spaces.fetch.prefetch();
+  void api.space.fetch.prefetch();
 
   return (
     <HydrateClient>

@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/form';
 import { api } from '@/trpc/react';
 import { uuidTranslator } from '@/lib/uuidTranslator';
-import { categoryNameSchema } from '@/lib/schemas/categories';
+import { categoryNameSchema } from '@/lib/schemas/category';
 
 import { StandardDialog, type StandardDialogExtProps } from '../StandardDialog';
 
@@ -36,16 +36,16 @@ export function AddCategoryDialog(props: StandardDialogExtProps) {
 
   const utils = api.useUtils();
 
-  const { mutate: createCategory } = api.categories.create.useMutation({
+  const { mutate: createCategory } = api.category.create.useMutation({
     onMutate: async ({ categoryName, spaceId }) => {
-      await utils.categories.fetch.cancel(spaceId);
-      const previousCategories = utils.categories.fetch.getData(spaceId);
+      await utils.category.fetch.cancel(spaceId);
+      const previousCategories = utils.category.fetch.getData(spaceId);
 
       const previousPart = previousCategories ?? [];
       const lastID =
         previousPart.length > 0 ? Math.max(...previousPart.map(c => c.id)) : 1;
 
-      utils.categories.fetch.setData(spaceId, [
+      utils.category.fetch.setData(spaceId, [
         ...(previousCategories ?? []),
         {
           id: lastID + 1,
@@ -59,13 +59,13 @@ export function AddCategoryDialog(props: StandardDialogExtProps) {
       return { previousCategories };
     },
     onSettled: async () => {
-      await utils.categories.fetch.invalidate(spaceId);
+      await utils.category.fetch.invalidate(spaceId);
     },
     onError: (error, _, ctx) => {
       toast.error(error.message);
 
       if (ctx !== undefined) {
-        utils.categories.fetch.setData(spaceId, ctx.previousCategories);
+        utils.category.fetch.setData(spaceId, ctx.previousCategories);
       }
     }
   });

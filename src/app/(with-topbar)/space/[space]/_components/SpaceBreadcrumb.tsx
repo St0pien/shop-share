@@ -15,7 +15,7 @@ interface SpaceNameProps {
 }
 
 async function SpaceName({ spaceId }: SpaceNameProps) {
-  const { spaceName } = await api.spaces.getName(spaceId);
+  const { spaceName } = await api.space.getName(spaceId);
 
   if (spaceName.length > 23) {
     return spaceName.slice(0, 20) + '...';

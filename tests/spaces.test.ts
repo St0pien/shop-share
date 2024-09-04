@@ -22,7 +22,7 @@ describe.concurrent('Spaces', () => {
     test('creates space record', async () => {
       const spaceName = 'Space @!#(*$!@) ??? "// l.....,.';
 
-      await api.spaces.create(spaceName);
+      await api.space.create(spaceName);
 
       const records = await db
         .select()
@@ -38,7 +38,7 @@ describe.concurrent('Spaces', () => {
     test('adds creator to members', async () => {
       const spaceName = 'Space members test';
 
-      const id = await api.spaces.create(spaceName);
+      const id = await api.space.create(spaceName);
 
       const members = await db
         .select()
@@ -62,9 +62,9 @@ describe.concurrent('Spaces', () => {
         'Test test'
       ];
 
-      await Promise.all(names.map(api.spaces.create));
+      await Promise.all(names.map(api.space.create));
 
-      const result = await api.spaces.fetch();
+      const result = await api.space.fetch();
 
       names.forEach(name => {
         expect(result.map(r => r.name)).toContain(name);
@@ -86,54 +86,54 @@ describe.concurrent('Spaces', () => {
 
     test('new user can join', async () => {
       const spaceName = 'Join Space test';
-      const spaceId = await api.spaces.create(spaceName);
+      const spaceId = await api.space.create(spaceName);
 
-      const inviteToken = await api.spaces.generateInvite(spaceId);
+      const inviteToken = await api.space.generateInvite(spaceId);
 
-      await secondApi.spaces.joinThroughInvite(inviteToken);
-      const spaces = await secondApi.spaces.fetch();
+      await secondApi.space.joinThroughInvite(inviteToken);
+      const spaces = await secondApi.space.fetch();
 
       expect(spaces.map(space => space.name)).toContain(spaceName);
     });
 
     test('only admin can invite', async () => {
       const spaceName = 'Join Space test';
-      const spaceId = await api.spaces.create(spaceName);
+      const spaceId = await api.space.create(spaceName);
 
-      const inviteToken = await api.spaces.generateInvite(spaceId);
+      const inviteToken = await api.space.generateInvite(spaceId);
 
-      await secondApi.spaces.joinThroughInvite(inviteToken);
+      await secondApi.space.joinThroughInvite(inviteToken);
 
       await expect(() =>
-        secondApi.spaces.generateInvite(spaceId)
+        secondApi.space.generateInvite(spaceId)
       ).rejects.toThrow();
     });
 
     test('throws if user already exists', async () => {
       const spaceName = 'Join Space test';
-      const spaceId = await api.spaces.create(spaceName);
+      const spaceId = await api.space.create(spaceName);
 
-      const inviteToken = await api.spaces.generateInvite(spaceId);
+      const inviteToken = await api.space.generateInvite(spaceId);
 
-      await secondApi.spaces.joinThroughInvite(inviteToken);
+      await secondApi.space.joinThroughInvite(inviteToken);
 
-      const newToken = await api.spaces.generateInvite(spaceId);
+      const newToken = await api.space.generateInvite(spaceId);
 
       await expect(() =>
-        secondApi.spaces.joinThroughInvite(newToken)
+        secondApi.space.joinThroughInvite(newToken)
       ).rejects.toThrow();
     });
 
     test('throws if invalid signature', async () => {
       const spaceName = 'Join Space test';
-      const spaceId = await api.spaces.create(spaceName);
+      const spaceId = await api.space.create(spaceName);
 
-      const inviteToken = await api.spaces.generateInvite(spaceId);
+      const inviteToken = await api.space.generateInvite(spaceId);
 
       const tampered = `${inviteToken.slice()}${inviteToken.at(-1) === '0' ? '1' : '0'}`;
 
       await expect(() =>
-        secondApi.spaces.joinThroughInvite(tampered)
+        secondApi.space.joinThroughInvite(tampered)
       ).rejects.toThrow('Invalid invitation token');
     });
   });

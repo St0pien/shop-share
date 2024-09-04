@@ -11,7 +11,7 @@ export default function EditCategoryPage({
 }) {
   const categoryId = Number(params.category);
 
-  void api.categories.get.prefetch(categoryId);
+  void api.category.get.prefetch(categoryId);
 
   return (
     <HydrateClient>

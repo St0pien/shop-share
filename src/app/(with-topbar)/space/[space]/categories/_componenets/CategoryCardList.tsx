@@ -13,14 +13,14 @@ interface Props {
 }
 
 export function CategoryCardList({ spaceId }: Props) {
-  const [categories] = api.categories.fetch.useSuspenseQuery(spaceId);
+  const [categories] = api.category.fetch.useSuspenseQuery(spaceId);
 
   const utils = api.useUtils();
   useEffect(() => {
     categories.forEach(category => {
-      utils.categories.get.setData(category.id, category);
+      utils.category.get.setData(category.id, category);
     });
-  }, [categories, utils.categories.get]);
+  }, [categories, utils.category.get]);
 
   const processedCategories = useProcessedRecords({
     data: categories,

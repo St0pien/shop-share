@@ -7,7 +7,7 @@ export default function DeleteCategoryPage({
   params: { category: string; space: string };
 }) {
   const categoryId = Number(params.category);
-  void api.categories.get.prefetch(categoryId);
+  void api.category.get.prefetch(categoryId);
 
   return (
     <HydrateClient>

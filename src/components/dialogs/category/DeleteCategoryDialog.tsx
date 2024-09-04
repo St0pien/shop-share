@@ -22,15 +22,13 @@ export function DeleteCategoryDialog({
   ...props
 }: Props & StandardDialogExtProps) {
   const utils = api.useUtils();
-  const { mutate: deleteSpace } = api.categories.delete.useMutation({
+  const { mutate: deleteSpace } = api.category.delete.useMutation({
     onMutate: async categoryId => {
-      await utils.categories.fetch.cancel(category.spaceId);
-      const previousCategories = utils.categories.fetch.getData(
-        category.spaceId
-      );
+      await utils.category.fetch.cancel(category.spaceId);
+      const previousCategories = utils.category.fetch.getData(category.spaceId);
 
       const previousPart = previousCategories ?? [];
-      utils.categories.fetch.setData(
+      utils.category.fetch.setData(
         category.spaceId,
         previousPart.filter(c => c.id !== categoryId)
       );
@@ -38,16 +36,13 @@ export function DeleteCategoryDialog({
       return { previousCategories };
     },
     onSettled: async () => {
-      await utils.categories.fetch.invalidate(category.spaceId);
+      await utils.category.fetch.invalidate(category.spaceId);
     },
     onError: (error, _, ctx) => {
       toast.error(error.message);
 
       if (ctx !== undefined) {
-        utils.categories.fetch.setData(
-          category.spaceId,
-          ctx.previousCategories
-        );
+        utils.category.fetch.setData(category.spaceId, ctx.previousCategories);
       }
     }
   });

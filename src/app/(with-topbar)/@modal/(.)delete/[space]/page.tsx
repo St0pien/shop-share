@@ -8,7 +8,7 @@ export default function DeleteSpacePage({
   params: { space: string };
 }) {
   const spaceId = uuidTranslator.toUUID(params.space);
-  void api.spaces.get.prefetch(spaceId);
+  void api.space.get.prefetch(spaceId);
 
   return (
     <HydrateClient>

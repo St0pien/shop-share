@@ -14,11 +14,11 @@ interface Props {
 }
 
 export function JoiningButtons({ token }: Props) {
-  const [spaceInfo] = api.spaces.getInviteInfo.useSuspenseQuery(token);
+  const [spaceInfo] = api.space.getInviteInfo.useSuspenseQuery(token);
 
   const router = useRouter();
   const { mutate: joinSpace, isPending } =
-    api.spaces.joinThroughInvite.useMutation({
+    api.space.joinThroughInvite.useMutation({
       onError: error => {
         router.replace('/');
         toast.error(error.message);

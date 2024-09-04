@@ -21,7 +21,7 @@ export function ShareSpaceDialog({ space }: { space: SpaceInfo }) {
   const [inviteLink, setInviteLink] = useState<string>();
 
   const { mutate: generateInvite, isPending } =
-    api.spaces.generateInvite.useMutation({
+    api.space.generateInvite.useMutation({
       onSuccess: token => {
         setInviteLink(`${window.origin}/join?token=${token}`);
       }

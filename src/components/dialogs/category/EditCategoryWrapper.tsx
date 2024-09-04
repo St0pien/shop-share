@@ -8,7 +8,7 @@ import { type StandardDialogExtProps } from '../StandardDialog';
 type Props = { categoryId: number } & StandardDialogExtProps;
 
 export function EditCategoryWrapper({ categoryId, ...props }: Props) {
-  const [categoryInfo] = api.categories.get.useSuspenseQuery(categoryId);
+  const [categoryInfo] = api.category.get.useSuspenseQuery(categoryId);
 
   return <EditCategoryDialog category={categoryInfo} {...props} />;
 }

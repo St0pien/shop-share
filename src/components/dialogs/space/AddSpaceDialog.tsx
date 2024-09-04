@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/form';
 import { api } from '@/trpc/react';
 import { Spinner } from '@/components/svg/Spinner';
-import { spaceNameSchema } from '@/lib/schemas/spaces';
+import { spaceNameSchema } from '@/lib/schemas/space';
 
 import { StandardDialog, type StandardDialogExtProps } from '../StandardDialog';
 
@@ -31,11 +31,11 @@ export function AddSpaceDialog(props: StandardDialogExtProps) {
 
   const utils = api.useUtils();
 
-  const { mutate: createSpace, isPending } = api.spaces.create.useMutation({
+  const { mutate: createSpace, isPending } = api.space.create.useMutation({
     onSuccess: () => {
       setIsOpen(false);
       createSpaceForm.setValue('name', '');
-      void utils.spaces.fetch.invalidate();
+      void utils.space.fetch.invalidate();
     },
     onError: error => {
       toast.error(error.message);

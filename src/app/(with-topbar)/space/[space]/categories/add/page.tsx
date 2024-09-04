@@ -9,7 +9,7 @@ export default function AddCategoryPage({
 }) {
   const returnUrl = `/space/${params.space}/categories`;
 
-  void api.categories.fetch.prefetch(uuidTranslator.toUUID(params.space));
+  void api.category.fetch.prefetch(uuidTranslator.toUUID(params.space));
 
   return (
     <HydrateClient>

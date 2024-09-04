@@ -15,3 +15,13 @@ export interface CategoryInfo {
   itemsQuantity: number;
   spaceId: string;
 }
+
+export interface ItemInfo {
+  id: number;
+  name: string;
+  createdAt: Date;
+  categoryId: number;
+  categoryName: string;
+  spaceId: string;
+  listQuantity: number;
+}

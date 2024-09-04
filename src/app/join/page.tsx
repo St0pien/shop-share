@@ -35,7 +35,7 @@ export default function JoinSpacePage({
     );
   }
 
-  void api.spaces.getInviteInfo.prefetch(searchParams.token);
+  void api.space.getInviteInfo.prefetch(searchParams.token);
 
   return (
     <HydrateClient>

@@ -22,7 +22,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { categoryNameSchema } from '@/lib/schemas/categories';
+import { categoryNameSchema } from '@/lib/schemas/category';
 
 interface Props {
   category: CategoryInfo;
@@ -39,15 +39,13 @@ export function EditCategoryDialog({
   const [open, setIsOpen] = useState(true);
 
   const utils = api.useUtils();
-  const { mutate: updateCategory } = api.categories.update.useMutation({
+  const { mutate: updateCategory } = api.category.update.useMutation({
     onMutate: async categoryData => {
-      await utils.categories.fetch.cancel(category.spaceId);
-      const previousCategories = utils.categories.fetch.getData(
-        category.spaceId
-      );
+      await utils.category.fetch.cancel(category.spaceId);
+      const previousCategories = utils.category.fetch.getData(category.spaceId);
 
       const previousPart = previousCategories ?? [];
-      utils.categories.fetch.setData(
+      utils.category.fetch.setData(
         category.spaceId,
         previousPart.map(c =>
           c.id === categoryData.id ? { ...c, name: categoryData.name } : c
@@ -57,16 +55,13 @@ export function EditCategoryDialog({
       return { previousCategories };
     },
     onSettled: async () => {
-      await utils.categories.fetch.invalidate(category.spaceId);
+      await utils.category.fetch.invalidate(category.spaceId);
     },
     onError: (error, _, ctx) => {
       toast.error(error.message);
 
       if (ctx !== undefined) {
-        utils.categories.fetch.setData(
-          category.spaceId,
-          ctx.previousCategories
-        );
+        utils.category.fetch.setData(category.spaceId, ctx.previousCategories);
       }
     }
   });

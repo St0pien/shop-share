@@ -9,16 +9,17 @@ import {
   checkCategoryAccess,
   getCategoryAccess
 } from '@/server/lib/access/category';
-import { categoryIdSchema, categoryNameSchema } from '@/lib/schemas/categories';
+import { categoryIdSchema, categoryNameSchema } from '@/lib/schemas/category';
+import { spaceIdSchema } from '@/lib/schemas/space';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
-export const categoriesRouter = createTRPCRouter({
+export const categoryRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        categoryName: z.string(),
-        spaceId: z.string().uuid()
+        categoryName: categoryNameSchema,
+        spaceId: spaceIdSchema
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -49,7 +50,7 @@ export const categoriesRouter = createTRPCRouter({
     }),
 
   fetch: protectedProcedure
-    .input(z.string().uuid())
+    .input(spaceIdSchema)
     .query(async ({ ctx, input: spaceId }) => {
       const access = await getSpaceAccess({
         db: ctx.db,

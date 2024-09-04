@@ -16,7 +16,7 @@ export default function CategoriesPage({
 }) {
   const spaceId = uuidTranslator.toUUID(params.space);
 
-  void api.categories.fetch.prefetch(spaceId);
+  void api.category.fetch.prefetch(spaceId);
 
   return (
     <HydrateClient>

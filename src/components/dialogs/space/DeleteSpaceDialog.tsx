@@ -23,10 +23,10 @@ export function DeleteSpaceDialog({
   ...props
 }: Props & StandardDialogExtProps) {
   const utils = api.useUtils();
-  const { mutate: deleteSpace, isPending } = api.spaces.delete.useMutation({
+  const { mutate: deleteSpace, isPending } = api.space.delete.useMutation({
     onSuccess: () => {
       setIsOpen(false);
-      void utils.spaces.fetch.invalidate();
+      void utils.space.fetch.invalidate();
     },
     onError: error => {
       toast.error(error.message);
