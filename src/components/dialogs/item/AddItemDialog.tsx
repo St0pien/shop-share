@@ -39,35 +39,44 @@ export function AddItemDialog(props: StandardDialogExtProps) {
   const utils = api.useUtils();
 
   const { mutate: createItem } = api.item.create.useMutation({
-    onMutate: async ({ itemName, spaceId }) => {
-      // await utils.item.fetch.cancel(spaceId);
-      const previousItems = utils.category.fetch.getData(spaceId);
+    onMutate: async ({ itemName, spaceId, categoryId }) => {
+      await utils.item.fetch.cancel(spaceId);
+      const previousItems = utils.item.fetch.getData(spaceId);
 
       const previousPart = previousItems ?? [];
       const lastID =
         previousPart.length > 0 ? Math.max(...previousPart.map(c => c.id)) : 1;
 
-      utils.category.fetch.setData(spaceId, [
+      const category = utils.category.fetch
+        .getData(spaceId)
+        ?.find(category => category.id === categoryId);
+      utils.item.fetch.setData(spaceId, [
         ...(previousItems ?? []),
         {
           id: lastID + 1,
           name: itemName,
-          itemsQuantity: 0,
           createdAt: new Date(),
-          spaceId
+          spaceId,
+          listQuantity: 0,
+          category: category
+            ? {
+                id: category.id,
+                name: category.name
+              }
+            : undefined
         }
       ]);
 
       return { previousItems };
     },
     onSettled: async () => {
-      // await utils.item.fetch.invalidate(spaceId);
+      await utils.item.fetch.invalidate(spaceId);
     },
     onError: (error, _, ctx) => {
       toast.error(error.message);
 
       if (ctx !== undefined) {
-        // utils.item.fetch.setData(spaceId, ctx.previousItems);
+        utils.item.fetch.setData(spaceId, ctx.previousItems);
       }
     }
   });

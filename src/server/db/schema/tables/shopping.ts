@@ -71,7 +71,9 @@ export const items = createTable('item', {
   createdAt: timestamp('created_at', {
     mode: 'date',
     withTimezone: true
-  }).default(sql`CURRENT_TIMESTAMP`)
+  })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull()
 });
 
 export const lists = createTable('list', {
@@ -83,7 +85,9 @@ export const lists = createTable('list', {
   createdAt: timestamp('created_at', {
     mode: 'date',
     withTimezone: true
-  }).default(sql`CURRENT_TIMESTAMP`)
+  })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull()
 });
 
 export const listItems = createTable('list_item', {

@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import { HydrateClient } from '@/trpc/server';
+import { api, HydrateClient } from '@/trpc/server';
 import { OrderSelect } from '@/components/filtering/OrderSelect';
 import { standardOrders } from '@/lib/order';
 import { AddLink } from '@/components/buttons/AddLink';
@@ -11,6 +11,8 @@ import { ItemCardList } from './_components/ItemCardList';
 
 export default function ItemsPage({ params }: { params: { space: string } }) {
   const spaceId = uuidTranslator.toUUID(params.space);
+
+  void api.item.fetch.prefetch(spaceId);
 
   return (
     <HydrateClient>

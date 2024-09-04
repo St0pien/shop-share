@@ -20,8 +20,10 @@ export interface ItemInfo {
   id: number;
   name: string;
   createdAt: Date;
-  categoryId: number;
-  categoryName: string;
   spaceId: string;
   listQuantity: number;
+  category?: {
+    id: number;
+    name: string;
+  };
 }

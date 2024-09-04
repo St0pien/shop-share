@@ -17,7 +17,7 @@ export function ItemCard({ itemInfo }: Props) {
         <div className='flex flex-col gap-4'>
           <div className='flex items-end gap-2'>
             <LayoutGrid className='text-primary' />
-            <p>{itemInfo.categoryName} </p>
+            <p>{itemInfo.category?.name ?? 'Uncategorized'} </p>
           </div>
           <div className='flex items-end gap-2'>
             <ListChecks className='text-primary' />
