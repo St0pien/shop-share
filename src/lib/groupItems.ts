@@ -34,7 +34,7 @@ export function groupItems(items: ItemInfo[]): ItemCategoryGroup[] {
     ([categoryId, items]) => ({
       category: {
         id: categoryId,
-        name: items[0]!.name
+        name: items[0]!.category!.name
       },
       items
     })

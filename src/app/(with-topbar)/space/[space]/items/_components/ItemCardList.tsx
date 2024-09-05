@@ -6,6 +6,7 @@ import { api } from '@/trpc/react';
 import { useProcessedRecords } from '@/lib/hooks/useProcessedRecords';
 import { standardOrdersByUrl } from '@/lib/order';
 import { groupItems } from '@/lib/groupItems';
+import { Separator } from '@/components/ui/separator';
 
 import { ItemCard } from './ItemCard';
 
@@ -33,9 +34,9 @@ export function ItemCardList({ spaceId }: Props) {
       )}
 
       {groupingEnabled
-        ? groupItems(processedItems).map(group => (
+        ? groupItems(processedItems).map((group, index, arr) => (
             <div key={group.category?.id ?? -1} className='w-full py-2'>
-              <h2 className='px-8 pb-2 text-xl text-neutral-light'>
+              <h2 className='px-8 pb-2 text-xl font-bold text-neutral-light'>
                 {group.category?.name ?? 'No category'}
               </h2>
               <div className='flex w-full flex-col items-center gap-4'>
@@ -43,6 +44,9 @@ export function ItemCardList({ spaceId }: Props) {
                   <ItemCard key={item.id} itemInfo={item} />
                 ))}
               </div>
+              {index !== arr.length - 1 && (
+                <Separator className='mx-auto mt-6 w-5/6' />
+              )}
             </div>
           ))
         : processedItems.map(item => (
