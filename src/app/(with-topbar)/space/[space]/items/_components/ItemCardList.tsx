@@ -1,6 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 import { api } from '@/trpc/react';
 import { useProcessedRecords } from '@/lib/hooks/useProcessedRecords';
@@ -16,6 +17,13 @@ interface Props {
 
 export function ItemCardList({ spaceId }: Props) {
   const [items] = api.item.fetch.useSuspenseQuery(spaceId);
+
+  const utils = api.useUtils();
+  useEffect(() => {
+    items.forEach(item => {
+      utils.item.get.setData(item.id, item);
+    });
+  }, [items, utils.item.get]);
 
   const processedItems = useProcessedRecords({
     data: items,

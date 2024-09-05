@@ -24,6 +24,8 @@ import { CategoryCombobox } from '@/components/form-fields/CategoryCombobox';
 
 import { StandardDialog, type StandardDialogExtProps } from '../StandardDialog';
 
+// TODO: Unify edit/add dialo
+
 const createItemSchema = z.object({
   name: itemNameSchema,
   categoryId: categoryIdAssignmentSchema

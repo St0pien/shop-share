@@ -2,11 +2,16 @@ import { z } from 'zod';
 import { and, countDistinct, eq } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
-import { categoryIdAssignmentSchema, itemNameSchema } from '@/lib/schemas/item';
+import {
+  categoryIdAssignmentSchema,
+  itemIdSchema,
+  itemNameSchema
+} from '@/lib/schemas/item';
 import { checkSpaceAccess, getSpaceAccess } from '@/server/lib/access/space';
 import { spaceIdSchema } from '@/lib/schemas/space';
 import { categories, items, listItems } from '@/server/db/schema';
 import { ErrorMessage } from '@/lib/ErrorMessage';
+import { checkItemAccess, getItemAccess } from '@/server/lib/access/item';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -87,5 +92,56 @@ export const itemRouter = createTRPCRouter({
           ? { id: category.id, name: category.name }
           : undefined
       }));
+    }),
+
+  get: protectedProcedure
+    .input(itemIdSchema)
+    .query(async ({ ctx, input: itemId }) => {
+      const access = await getItemAccess({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        itemId
+      });
+
+      checkItemAccess(access, 'member');
+
+      const [row] = await ctx.db
+        .select({
+          item: items,
+          category: categories,
+          listQuantity: countDistinct(listItems.listId)
+        })
+        .from(items)
+        .leftJoin(categories, eq(categories.id, items.categoryId))
+        .leftJoin(listItems, eq(listItems.itemId, items.id))
+        .where(eq(items.id, itemId))
+        .groupBy(items.id, categories.id);
+
+      const { item, category, listQuantity } = row!;
+
+      return {
+        id: item.id,
+        name: item.name,
+        createdAt: item.createdAt,
+        spaceId: item.spaceId,
+        listQuantity,
+        category: category
+          ? { id: category.id, name: category.name }
+          : undefined
+      };
+    }),
+
+  delete: protectedProcedure
+    .input(itemIdSchema)
+    .mutation(async ({ ctx, input: itemId }) => {
+      const access = await getItemAccess({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        itemId
+      });
+
+      checkItemAccess(access, 'member');
+
+      await ctx.db.delete(items).where(eq(items.id, itemId));
     })
 });

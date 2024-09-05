@@ -1,6 +1,7 @@
 export enum ErrorMessage {
   SPACE_NOT_FOUND = 'Could not find space with provided ID',
   CATEGORY_NOT_FOUND = 'Could not find category with provided ID',
+  ITEM_NOT_FOUND = 'Could not find item with provided ID',
 
   ACCESS_DENIED_ADMIN = 'You have no adminstrative access to this resource',
   DATABASE_ERROR = 'Failed to execute operation in database',
