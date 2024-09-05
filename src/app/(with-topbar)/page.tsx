@@ -14,7 +14,7 @@ export default async function HomePage() {
   return (
     <HydrateClient>
       <div className='grid h-full w-full grid-rows-[min-content_1fr]'>
-        <div className='flex w-full justify-end border-b-white px-[8%] pb-4 pt-2'>
+        <div className='flex w-full justify-between border-b-white px-[8%] pb-4 pt-2'>
           <div className='w-40'>
             <OrderSelect
               orderSelectItems={standardOrders.map(({ url, display }) => ({

@@ -19,13 +19,7 @@ export default function ItemsPage({ params }: { params: { space: string } }) {
   return (
     <HydrateClient>
       <div className='h-full w-full'>
-        <div className='flex w-full items-center justify-between border-b-white px-[8%] pb-4 pt-2'>
-          <div className='pr-4'>
-            <FilterLink href={`/space/${params.space}/items/filter`} prefetch />
-          </div>
-          <div className='mr-10'>
-            <GroupingSwitch />
-          </div>
+        <div className='flex w-full items-center justify-between gap-4 border-b-white px-[8%] pb-4 pt-2'>
           <div className='w-40'>
             <OrderSelect
               orderSelectItems={standardOrders.map(({ url, display }) => ({
@@ -33,6 +27,14 @@ export default function ItemsPage({ params }: { params: { space: string } }) {
                 display
               }))}
             />
+          </div>
+
+          <div className='pr-4'>
+            <GroupingSwitch />
+          </div>
+
+          <div>
+            <FilterLink href={`/space/${params.space}/items/filter`} prefetch />
           </div>
         </div>
 

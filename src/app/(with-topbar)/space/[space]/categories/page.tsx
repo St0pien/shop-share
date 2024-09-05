@@ -21,7 +21,7 @@ export default function CategoriesPage({
   return (
     <HydrateClient>
       <div className='h-full w-full'>
-        <div className='flex w-full justify-end border-b-white px-[8%] pb-4 pt-2'>
+        <div className='flex w-full justify-between border-b-white px-[8%] pb-4 pt-2'>
           <div className='w-40'>
             <OrderSelect
               orderSelectItems={standardOrders.map(({ url, display }) => ({
