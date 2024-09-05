@@ -10,8 +10,6 @@ import {
   SelectValue
 } from '@/components/ui/select';
 
-import { Label } from '../ui/label';
-
 interface OrderSelectItem {
   url: string;
   display: string;
