@@ -9,11 +9,11 @@ import { OrderSelect } from './OrderSelect';
 const testOrders = [
   {
     url: '',
-    display: 'Option 1'
+    value: 'Option 1'
   },
   {
     url: 'option-2',
-    display: 'Option 2'
+    value: 'Option 2'
   }
 ];
 
@@ -36,7 +36,7 @@ describe('OrderSelect', () => {
 
     await user.click(select);
 
-    const option2 = await screen.findByText(testOrders[1]!.display);
+    const option2 = await screen.findByText(testOrders[1]!.value);
     await user.click(option2);
 
     expect(fakeNav.searchParams.get('order')).toEqual(testOrders[1]?.url);
@@ -46,13 +46,13 @@ describe('OrderSelect', () => {
     const fakeNav = startFakeNav();
     const { unmount } = render(<OrderSelect orderSelectItems={testOrders} />);
 
-    expect(await screen.findByText(testOrders[0]!.display)).toBeVisible();
+    expect(await screen.findByText(testOrders[0]!.value)).toBeVisible();
 
     fakeNav.url.searchParams.set('order', testOrders[1]!.url);
 
     unmount();
     render(<OrderSelect orderSelectItems={testOrders} />);
 
-    expect(await screen.findByText(testOrders[1]!.display)).toBeVisible();
+    expect(await screen.findByText(testOrders[1]!.value)).toBeVisible();
   });
 });

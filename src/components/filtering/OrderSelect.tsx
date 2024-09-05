@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 import {
   Select,
@@ -9,41 +9,19 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-
-interface OrderSelectItem {
-  url: string;
-  display: string;
-}
+import { type UrlValue, useUrlReflection } from '@/lib/hooks/useUrlReflection';
 
 interface Props {
-  orderSelectItems: OrderSelectItem[];
+  orderSelectItems: UrlValue<string>[];
 }
 
 export function OrderSelect({ orderSelectItems }: Props) {
-  const router = useRouter();
+  const [selectedOption, onSwitch] = useUrlReflection({
+    urlKey: 'order',
+    urlValueMap: orderSelectItems
+  });
+
   const searchParams = useSearchParams();
-  const pathname = usePathname();
-
-  const onSwitch = (value: string) => {
-    const newSearchParams = new URLSearchParams(searchParams);
-
-    const url = orderSelectItems.find(i => i.display === value)?.url;
-
-    if (url === '' || url === undefined) {
-      newSearchParams.delete('order');
-    } else {
-      newSearchParams.set('order', url);
-    }
-
-    router.replace(`${pathname}?${newSearchParams.toString()}`);
-  };
-
-  const orderParam = searchParams.get('order') ?? '';
-
-  const selectedOption = orderSelectItems.find(
-    i => i.url === orderParam
-  )?.display;
-
   const disabled = searchParams.has('search');
 
   return (
@@ -60,9 +38,9 @@ export function OrderSelect({ orderSelectItems }: Props) {
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {orderSelectItems.map(({ display }) => (
-            <SelectItem key={display} value={display}>
-              {display}
+          {orderSelectItems.map(({ value }) => (
+            <SelectItem key={value} value={value}>
+              {value}
             </SelectItem>
           ))}
         </SelectContent>

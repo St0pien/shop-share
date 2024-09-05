@@ -26,7 +26,7 @@ export default function CategoriesPage({
             <OrderSelect
               orderSelectItems={standardOrders.map(({ url, display }) => ({
                 url,
-                display
+                value: display
               }))}
             />
           </div>

@@ -19,7 +19,7 @@ export default async function HomePage() {
             <OrderSelect
               orderSelectItems={standardOrders.map(({ url, display }) => ({
                 url,
-                display
+                value: display
               }))}
             />
           </div>

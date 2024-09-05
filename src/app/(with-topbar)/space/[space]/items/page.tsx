@@ -24,7 +24,7 @@ export default function ItemsPage({ params }: { params: { space: string } }) {
             <OrderSelect
               orderSelectItems={standardOrders.map(({ url, display }) => ({
                 url,
-                display
+                value: display
               }))}
             />
           </div>
