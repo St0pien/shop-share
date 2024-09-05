@@ -134,6 +134,7 @@ export function AddItemDialog(props: StandardDialogExtProps) {
                 spaceId={spaceId}
                 value={field.value}
                 onChange={field.onChange}
+                avoidCollisions={false}
               />
             )}
           />

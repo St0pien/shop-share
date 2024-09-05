@@ -50,7 +50,6 @@ export function OrderSelect({ orderSelectItems }: Props) {
 
   return (
     <div className='flex w-full items-center gap-6'>
-      <Label className='text-neutral-light'>Order: </Label>
       <Select
         disabled={disabled}
         defaultValue={selectedOption}
