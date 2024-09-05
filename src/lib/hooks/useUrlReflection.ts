@@ -10,30 +10,43 @@ interface UrlReflectionConfig<T> {
   urlValueMap: UrlValue<T>[];
 }
 
-export function useUrlReflection<T>({
-  urlKey,
-  urlValueMap
-}: UrlReflectionConfig<T>): [T | undefined, (val: T) => void] {
+export function useStringUrlReflection(
+  urlKey: string
+): [string, (val: string) => void] {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
-  const setValue = (val: T) => {
+  const setValue = (val: string) => {
     const newSearchParams = new URLSearchParams(searchParams);
 
-    const url = urlValueMap.find(i => i.value === val)?.url;
-
-    if (url === '' || url === undefined) {
+    if (val === '' || val === undefined) {
       newSearchParams.delete(urlKey);
     } else {
-      newSearchParams.set(urlKey, url);
+      newSearchParams.set(urlKey, val);
     }
 
     router.replace(`${pathname}?${newSearchParams.toString()}`);
   };
 
   const valueParam = searchParams.get(urlKey) ?? '';
-  const selectedValue = urlValueMap.find(v => v.url === valueParam)?.value;
+
+  return [valueParam, setValue];
+}
+
+export function useMappedUrlReflection<T>({
+  urlKey,
+  urlValueMap
+}: UrlReflectionConfig<T>): [T | undefined, (val: T) => void] {
+  const [value, setUrl] = useStringUrlReflection(urlKey);
+
+  const setValue = (val: T) => {
+    const url = urlValueMap.find(i => i.value === val)?.url;
+
+    setUrl(url ?? '');
+  };
+
+  const selectedValue = urlValueMap.find(v => v.url === value)?.value;
 
   return [selectedValue, setValue];
 }

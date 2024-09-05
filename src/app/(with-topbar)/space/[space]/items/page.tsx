@@ -14,6 +14,7 @@ import { ItemCardList } from './_components/ItemCardList';
 export default function ItemsPage({ params }: { params: { space: string } }) {
   const spaceId = uuidTranslator.toUUID(params.space);
 
+  void api.category.fetch.prefetch(spaceId);
   void api.item.fetch.prefetch(spaceId);
 
   return (

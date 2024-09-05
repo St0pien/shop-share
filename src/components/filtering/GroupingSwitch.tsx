@@ -1,12 +1,12 @@
 'use client';
 
-import { useUrlReflection } from '@/lib/hooks/useUrlReflection';
+import { useMappedUrlReflection } from '@/lib/hooks/useUrlReflection';
 
 import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
 
 export function GroupingSwitch() {
-  const [enabled, setEnabled] = useUrlReflection({
+  const [enabled, setEnabled] = useMappedUrlReflection<boolean>({
     urlKey: 'grouping',
     urlValueMap: [
       {

@@ -5,7 +5,7 @@ import { useRef } from 'react';
 
 import { startFakeNav } from '@/mocks/NavigationMock';
 
-import { useUrlReflection } from './useUrlReflection';
+import { useMappedUrlReflection } from './useUrlReflection';
 
 const testValue = [
   {
@@ -20,7 +20,7 @@ const testValue = [
 ];
 
 const TestComponent = () => {
-  const [value, setValue] = useUrlReflection({
+  const [value, setValue] = useMappedUrlReflection({
     urlKey: 'test',
     urlValueMap: testValue
   });

@@ -9,14 +9,17 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { type UrlValue, useUrlReflection } from '@/lib/hooks/useUrlReflection';
+import {
+  type UrlValue,
+  useMappedUrlReflection
+} from '@/lib/hooks/useUrlReflection';
 
 interface Props {
   orderSelectItems: UrlValue<string>[];
 }
 
 export function OrderSelect({ orderSelectItems }: Props) {
-  const [selectedOption, onSwitch] = useUrlReflection({
+  const [selectedOption, onSwitch] = useMappedUrlReflection({
     urlKey: 'order',
     urlValueMap: orderSelectItems
   });

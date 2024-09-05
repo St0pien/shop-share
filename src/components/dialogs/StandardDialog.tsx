@@ -19,6 +19,7 @@ export interface StandardDialogBasicProps {
 export interface StandardDialogExtProps {
   disableOutsideInteraction?: boolean;
   returnUrl?: string;
+  routerMethod?: 'push' | 'replace';
 }
 
 export type StandardDialogProps = StandardDialogBasicProps &
@@ -30,7 +31,8 @@ export function StandardDialog({
   title,
   description,
   returnUrl,
-  disableOutsideInteraction = false
+  disableOutsideInteraction = false,
+  routerMethod = 'push'
 }: StandardDialogProps) {
   const router = useRouter();
 
@@ -44,9 +46,9 @@ export function StandardDialog({
     if (returnUrl === undefined) {
       router.back();
     } else {
-      router.push(returnUrl);
+      router[routerMethod](returnUrl);
     }
-  }, [returnUrl, router]);
+  }, [returnUrl, router, routerMethod]);
 
   const onOpenChange = useCallback(
     (isOpen: boolean) => {

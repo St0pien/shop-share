@@ -27,14 +27,26 @@ export function ItemCardList({ spaceId }: Props) {
   const searchParams = useSearchParams();
   const groupingEnabled = searchParams.get('grouping') !== 'disabled';
 
+  const categoriesParam = searchParams.get('categories');
+  const filteredCategoryIds = categoriesParam
+    ? categoriesParam.split(',').map(str => Number(str))
+    : [];
+
+  const filteredItems =
+    filteredCategoryIds.length > 0
+      ? processedItems.filter(
+          item => !!filteredCategoryIds.find(id => item.category?.id === id)
+        )
+      : processedItems;
+
   return (
     <div className='flex w-full flex-col items-center gap-4'>
-      {processedItems.length === 0 && (
+      {filteredItems.length === 0 && (
         <p className='text-xl text-neutral-light'>No items found</p>
       )}
 
       {groupingEnabled
-        ? groupItems(processedItems).map((group, index, arr) => (
+        ? groupItems(filteredItems).map((group, index, arr) => (
             <div key={group.category?.id ?? -1} className='w-full py-2'>
               <h2 className='px-8 pb-2 text-xl font-bold text-neutral-light'>
                 {group.category?.name ?? 'No category'}
@@ -49,9 +61,7 @@ export function ItemCardList({ spaceId }: Props) {
               )}
             </div>
           ))
-        : processedItems.map(item => (
-            <ItemCard key={item.id} itemInfo={item} />
-          ))}
+        : filteredItems.map(item => <ItemCard key={item.id} itemInfo={item} />)}
 
       <div className='h-48'></div>
     </div>

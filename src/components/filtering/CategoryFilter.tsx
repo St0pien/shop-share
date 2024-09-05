@@ -1,7 +1,7 @@
 'use client';
 
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -18,31 +18,18 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover';
-import { api } from '@/trpc/react';
+import { type CategoryInfo } from '@/lib/types';
 
 import { ScrollArea } from '../ui/scroll-area';
 
 interface Props {
-  spaceId: string;
-  value?: number; // category id
-  onChange?: (val?: number) => void;
+  categories?: CategoryInfo[];
+  selected: number[];
+  onSelect?: (val: CategoryInfo) => void;
 }
 
-export function CategoryFilter({ spaceId, value, onChange }: Props) {
-  const { data: categories, isPending } = api.category.fetch.useQuery(spaceId);
-  const initCategory = categories?.find(category => category.id === value);
-
-  const [categoryName, setCategoryName] = useState(initCategory?.name ?? '');
+export function CategoryFilter({ categories, selected, onSelect }: Props) {
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (onChange !== undefined) {
-      const categoryInfo = categories?.find(
-        category => categoryName === category.name
-      );
-      onChange(categoryInfo?.id ?? undefined);
-    }
-  }, [categoryName, categories, onChange]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -53,7 +40,7 @@ export function CategoryFilter({ spaceId, value, onChange }: Props) {
           aria-expanded={open}
           className='w-full justify-between overflow-x-hidden'
         >
-          {categoryName ? categoryName : 'Select category...'}
+          Add Filter...
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
@@ -63,29 +50,32 @@ export function CategoryFilter({ spaceId, value, onChange }: Props) {
           <CommandList>
             <ScrollArea>
               <CommandEmpty>
-                {isPending ? 'Loading ...' : 'No category found'}
+                {!categories ? 'Loading ...' : 'No category found'}
               </CommandEmpty>
               <CommandGroup>
                 {categories?.map(category => (
                   <CommandItem
                     key={category.id}
                     value={category.name}
-                    onSelect={currentValue => {
-                      setCategoryName(
-                        currentValue === categoryName ? '' : currentValue
-                      );
-                      setOpen(false);
+                    onSelect={() => {
+                      if (onSelect !== undefined) {
+                        onSelect(category);
+                        setOpen(false);
+                      }
                     }}
                   >
                     <div className='flex items-center gap-2 overflow-hidden'>
                       <Check
                         className={cn(
                           'h-4 w-4 shrink-0 text-primary',
-                          categoryName === category.name
+                          selected.find(id => id === category.id)
                             ? 'opacity-100'
                             : 'opacity-0'
                         )}
                       />
+                      <p className='text-sm text-neutral-light'>
+                        {category.itemsQuantity}
+                      </p>
                       <p>{category.name}</p>
                     </div>
                   </CommandItem>
