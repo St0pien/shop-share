@@ -12,6 +12,10 @@ import { spaceIdSchema } from '@/lib/schemas/space';
 import { categories, items, listItems } from '@/server/db/schema';
 import { ErrorMessage } from '@/lib/ErrorMessage';
 import { checkItemAccess, getItemAccess } from '@/server/lib/access/item';
+import {
+  checkCategoryAccess,
+  getCategoryAccess
+} from '@/server/lib/access/category';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -143,5 +147,41 @@ export const itemRouter = createTRPCRouter({
       checkItemAccess(access, 'member');
 
       await ctx.db.delete(items).where(eq(items.id, itemId));
+    }),
+
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: itemIdSchema,
+        name: itemNameSchema,
+        categoryId: categoryIdAssignmentSchema
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const itemAccess = await getItemAccess({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        itemId: input.id
+      });
+
+      checkItemAccess(itemAccess, 'member');
+
+      if (input.categoryId !== undefined) {
+        const categoryAccess = await getCategoryAccess({
+          db: ctx.db,
+          userId: ctx.session.user.id,
+          categoryId: input.categoryId
+        });
+
+        checkCategoryAccess(categoryAccess, 'member');
+      }
+
+      await ctx.db
+        .update(items)
+        .set({
+          name: input.name,
+          categoryId: input.categoryId
+        })
+        .where(eq(items.id, input.id));
     })
 });
