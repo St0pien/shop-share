@@ -1,4 +1,4 @@
-import { DeleteItemWrapper } from '@/components/dialogs/item/DeleteItemWrapper';
+import { DeleteItemDialog } from '@/components/dialogs/item/DeleteItemDialog';
 import { api, HydrateClient } from '@/trpc/server';
 
 export default function DeleteItemPage({
@@ -11,7 +11,7 @@ export default function DeleteItemPage({
 
   return (
     <HydrateClient>
-      <DeleteItemWrapper
+      <DeleteItemDialog
         itemId={itemId}
         returnUrl={`/space/${params.space}/items`}
       />

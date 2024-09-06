@@ -1,4 +1,4 @@
-import { DeleteSpaceWrapper } from '@/components/dialogs/space/DeleteSpaceWrapper';
+import { DeleteSpaceDialog } from '@/components/dialogs/space/DeleteSpaceDialog';
 import { uuidTranslator } from '@/lib/uuidTranslator';
 import { api, HydrateClient } from '@/trpc/server';
 
@@ -13,7 +13,7 @@ export default function DeleteSpacePage({
 
   return (
     <HydrateClient>
-      <DeleteSpaceWrapper spaceId={spaceId} />;
+      <DeleteSpaceDialog spaceId={spaceId} />;
     </HydrateClient>
   );
 }

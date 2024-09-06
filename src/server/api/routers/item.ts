@@ -180,7 +180,7 @@ export const itemRouter = createTRPCRouter({
         .update(items)
         .set({
           name: input.name,
-          categoryId: input.categoryId
+          categoryId: input.categoryId ?? null
         })
         .where(eq(items.id, input.id));
     })

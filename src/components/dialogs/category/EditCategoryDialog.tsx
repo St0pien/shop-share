@@ -7,7 +7,6 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { DialogClose, DialogFooter } from '@/components/ui/dialog';
-import { type CategoryInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { api } from '@/trpc/react';
 import {
@@ -25,7 +24,7 @@ import { Input } from '@/components/ui/input';
 import { categoryNameSchema } from '@/lib/schemas/category';
 
 interface Props {
-  category: CategoryInfo;
+  categoryId: number;
 }
 
 const editCategorySchema = z.object({
@@ -33,9 +32,11 @@ const editCategorySchema = z.object({
 });
 
 export function EditCategoryDialog({
-  category,
+  categoryId,
   ...props
 }: Props & StandardDialogExtProps) {
+  const [category] = api.category.get.useSuspenseQuery(categoryId);
+
   const [open, setIsOpen] = useState(true);
 
   const utils = api.useUtils();

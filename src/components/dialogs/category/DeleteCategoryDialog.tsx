@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { DialogClose, DialogFooter } from '@/components/ui/dialog';
-import { type CategoryInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { api } from '@/trpc/react';
 import {
@@ -14,13 +13,15 @@ import {
 } from '@/components/dialogs/StandardDialog';
 
 interface Props {
-  category: CategoryInfo;
+  categoryId: number;
 }
 
 export function DeleteCategoryDialog({
-  category,
+  categoryId,
   ...props
 }: Props & StandardDialogExtProps) {
+  const [category] = api.category.get.useSuspenseQuery(categoryId);
+
   const utils = api.useUtils();
   const { mutate: deleteCategory } = api.category.delete.useMutation({
     onMutate: async categoryId => {

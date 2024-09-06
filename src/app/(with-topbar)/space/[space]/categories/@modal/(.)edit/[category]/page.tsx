@@ -1,4 +1,4 @@
-import { EditCategoryWrapper } from '@/components/dialogs/category/EditCategoryWrapper';
+import { EditCategoryDialog } from '@/components/dialogs/category/EditCategoryDialog';
 import { api, HydrateClient } from '@/trpc/server';
 
 export default function EditCategoryModal({
@@ -15,7 +15,7 @@ export default function EditCategoryModal({
 
   return (
     <HydrateClient>
-      <EditCategoryWrapper categoryId={categoryId} />
+      <EditCategoryDialog categoryId={categoryId} />
     </HydrateClient>
   );
 }

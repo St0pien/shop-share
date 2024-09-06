@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { DialogClose, DialogFooter } from '@/components/ui/dialog';
-import { type ItemInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { api } from '@/trpc/react';
 import {
@@ -14,13 +13,15 @@ import {
 } from '@/components/dialogs/StandardDialog';
 
 interface Props {
-  item: ItemInfo;
+  itemId: number;
 }
 
 export function DeleteItemDialog({
-  item,
+  itemId,
   ...props
 }: Props & StandardDialogExtProps) {
+  const [item] = api.item.get.useSuspenseQuery(itemId);
+
   const utils = api.useUtils();
   const { mutate: deleteItem } = api.item.delete.useMutation({
     onMutate: async itemId => {

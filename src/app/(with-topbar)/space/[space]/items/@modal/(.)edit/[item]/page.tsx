@@ -15,10 +15,7 @@ export default function EditCategoryPage({
 
   return (
     <HydrateClient>
-      <EditItemDialog
-        itemId={itemId}
-        returnUrl={`/space/${params.space}/items`}
-      />
+      <EditItemDialog itemId={itemId} />
     </HydrateClient>
   );
 }

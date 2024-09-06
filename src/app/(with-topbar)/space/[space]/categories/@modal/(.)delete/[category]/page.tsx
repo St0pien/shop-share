@@ -1,4 +1,4 @@
-import { DeleteCategoryWrapper } from '@/components/dialogs/category/DeleteCategoryWrapper';
+import { DeleteCategoryDialog } from '@/components/dialogs/category/DeleteCategoryDialog';
 import { api, HydrateClient } from '@/trpc/server';
 
 export default function DeleteCategoryModal({
@@ -11,7 +11,7 @@ export default function DeleteCategoryModal({
 
   return (
     <HydrateClient>
-      <DeleteCategoryWrapper categoryId={categoryId} />
+      <DeleteCategoryDialog categoryId={categoryId} />
     </HydrateClient>
   );
 }

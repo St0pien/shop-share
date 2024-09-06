@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { DialogClose, DialogFooter } from '@/components/ui/dialog';
-import { type SpaceInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { api } from '@/trpc/react';
 import { Spinner } from '@/components/svg/Spinner';
@@ -15,13 +14,15 @@ import {
 } from '@/components/dialogs/StandardDialog';
 
 interface Props {
-  space: SpaceInfo;
+  spaceId: string;
 }
 
 export function DeleteSpaceDialog({
-  space,
+  spaceId,
   ...props
 }: Props & StandardDialogExtProps) {
+  const [space] = api.space.get.useSuspenseQuery(spaceId);
+
   const utils = api.useUtils();
   const { mutate: deleteSpace, isPending } = api.space.delete.useMutation({
     onSuccess: () => {
