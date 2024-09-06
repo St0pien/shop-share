@@ -2,34 +2,21 @@
 
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { z } from 'zod';
-import { type SubmitHandler, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { type SubmitHandler } from 'react-hook-form';
 
-import { DialogClose, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { api } from '@/trpc/react';
 import {
   StandardDialog,
   type StandardDialogExtProps
 } from '@/components/dialogs/StandardDialog';
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { categoryNameSchema } from '@/lib/schemas/category';
+  CategoryForm,
+  type CategoryFormValues
+} from '@/components/forms/CategoryForm';
 
 interface Props {
   categoryId: number;
 }
-
-const editCategorySchema = z.object({
-  name: categoryNameSchema
-});
 
 export function EditCategoryDialog({
   categoryId,
@@ -67,23 +54,12 @@ export function EditCategoryDialog({
     }
   });
 
-  const editCategoryForm = useForm<z.infer<typeof editCategorySchema>>({
-    resolver: zodResolver(editCategorySchema),
-    defaultValues: {
-      name: category.name
-    },
-    mode: 'onChange'
-  });
-
-  const submitHandler: SubmitHandler<z.infer<typeof editCategorySchema>> = ({
-    name
-  }) => {
+  const submitHandler: SubmitHandler<CategoryFormValues> = ({ name }) => {
     updateCategory({
       id: category.id,
       name
     });
     setIsOpen(false);
-    editCategoryForm.setValue('name', '');
   };
 
   return (
@@ -93,35 +69,10 @@ export function EditCategoryDialog({
       description='Change the category name, items will stay the same'
       {...props}
     >
-      <Form {...editCategoryForm}>
-        <form
-          className='flex flex-col gap-8'
-          onSubmit={editCategoryForm.handleSubmit(submitHandler)}
-        >
-          <FormField
-            control={editCategoryForm.control}
-            name='name'
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input placeholder='Name' {...field} />
-                </FormControl>
-                <FormMessage className='dark:text-red-600' />
-              </FormItem>
-            )}
-          />
-          <DialogFooter>
-            <div className='flex justify-between'>
-              <DialogClose asChild>
-                <Button type='button' variant='secondary'>
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button>Save</Button>
-            </div>
-          </DialogFooter>
-        </form>
-      </Form>
+      <CategoryForm
+        defaultValues={{ name: category.name }}
+        submitHandler={submitHandler}
+      />
     </StandardDialog>
   );
 }

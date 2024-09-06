@@ -1,31 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { type SubmitHandler, useForm } from 'react-hook-form';
+import { type SubmitHandler } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 
-import { DialogClose, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage
-} from '@/components/ui/form';
 import { api } from '@/trpc/react';
 import { uuidTranslator } from '@/lib/uuidTranslator';
-import { categoryNameSchema } from '@/lib/schemas/category';
+import {
+  CategoryForm,
+  type CategoryFormValues
+} from '@/components/forms/CategoryForm';
 
 import { StandardDialog, type StandardDialogExtProps } from '../StandardDialog';
-
-const createCategorySchema = z.object({
-  name: categoryNameSchema
-});
 
 export function AddCategoryDialog(props: StandardDialogExtProps) {
   const [isOpen, setIsOpen] = useState(true);
@@ -70,23 +57,12 @@ export function AddCategoryDialog(props: StandardDialogExtProps) {
     }
   });
 
-  const createCategoryForm = useForm<z.infer<typeof createCategorySchema>>({
-    resolver: zodResolver(createCategorySchema),
-    defaultValues: {
-      name: ''
-    },
-    mode: 'onChange'
-  });
-
-  const submitHandler: SubmitHandler<z.infer<typeof createCategorySchema>> = ({
-    name
-  }) => {
+  const submitHandler: SubmitHandler<CategoryFormValues> = ({ name }) => {
     createCategory({
       categoryName: name,
       spaceId
     });
     setIsOpen(false);
-    createCategoryForm.setValue('name', '');
   };
 
   return (
@@ -96,35 +72,10 @@ export function AddCategoryDialog(props: StandardDialogExtProps) {
       description='Category groups together shopping items'
       {...props}
     >
-      <Form {...createCategoryForm}>
-        <form
-          className='flex flex-col gap-8'
-          onSubmit={createCategoryForm.handleSubmit(submitHandler)}
-        >
-          <FormField
-            control={createCategoryForm.control}
-            name='name'
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input placeholder='Name' {...field} />
-                </FormControl>
-                <FormMessage className='dark:text-red-600' />
-              </FormItem>
-            )}
-          />
-          <DialogFooter>
-            <div className='flex justify-between'>
-              <DialogClose asChild>
-                <Button type='button' variant='secondary'>
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button>Save</Button>
-            </div>
-          </DialogFooter>
-        </form>
-      </Form>
+      <CategoryForm
+        defaultValues={{ name: '' }}
+        submitHandler={submitHandler}
+      />
     </StandardDialog>
   );
 }

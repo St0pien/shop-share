@@ -2,36 +2,18 @@
 
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { z } from 'zod';
-import { type SubmitHandler, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { type SubmitHandler } from 'react-hook-form';
 
-import { DialogClose, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { api } from '@/trpc/react';
 import {
   StandardDialog,
   type StandardDialogExtProps
 } from '@/components/dialogs/StandardDialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { categoryIdAssignmentSchema, itemNameSchema } from '@/lib/schemas/item';
-import { CategoryCombobox } from '@/components/form-fields/CategoryCombobox';
+import { ItemForm, type ItemFormValues } from '@/components/forms/ItemForm';
 
 interface Props {
   itemId: number;
 }
-
-const editItemSchema = z.object({
-  name: itemNameSchema,
-  categoryId: categoryIdAssignmentSchema
-});
 
 export function EditItemDialog({
   itemId,
@@ -86,16 +68,7 @@ export function EditItemDialog({
     }
   });
 
-  const editItemForm = useForm<z.infer<typeof editItemSchema>>({
-    resolver: zodResolver(editItemSchema),
-    defaultValues: {
-      name: item.name,
-      categoryId: item.category?.id
-    },
-    mode: 'onChange'
-  });
-
-  const submitHandler: SubmitHandler<z.infer<typeof editItemSchema>> = ({
+  const submitHandler: SubmitHandler<ItemFormValues> = ({
     name,
     categoryId
   }) => {
@@ -114,46 +87,11 @@ export function EditItemDialog({
       description='Change the item name'
       {...props}
     >
-      <Form {...editItemForm}>
-        <form
-          className='flex flex-col gap-8'
-          onSubmit={editItemForm.handleSubmit(submitHandler)}
-        >
-          <FormField
-            control={editItemForm.control}
-            name='name'
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input placeholder='Name' {...field} />
-                </FormControl>
-                <FormMessage className='dark:text-red-600' />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={editItemForm.control}
-            name='categoryId'
-            render={({ field }) => (
-              <CategoryCombobox
-                spaceId={item.spaceId}
-                value={field.value}
-                onChange={field.onChange}
-              />
-            )}
-          />
-          <DialogFooter>
-            <div className='flex justify-between'>
-              <DialogClose asChild>
-                <Button type='button' variant='secondary'>
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button>Save</Button>
-            </div>
-          </DialogFooter>
-        </form>
-      </Form>
+      <ItemForm
+        spaceId={item.spaceId}
+        defaultValues={{ name: item.name, categoryId: item.category?.id }}
+        submitHandler={submitHandler}
+      />
     </StandardDialog>
   );
 }

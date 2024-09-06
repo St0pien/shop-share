@@ -1,30 +1,14 @@
 'use client';
 
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { type SubmitHandler, useForm } from 'react-hook-form';
+import { type SubmitHandler } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useState } from 'react';
 
-import { DialogClose, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage
-} from '@/components/ui/form';
 import { api } from '@/trpc/react';
 import { Spinner } from '@/components/svg/Spinner';
-import { spaceNameSchema } from '@/lib/schemas/space';
+import { SpaceForm, type SpaceFormValues } from '@/components/forms/SpaceForm';
 
 import { StandardDialog, type StandardDialogExtProps } from '../StandardDialog';
-
-const createSpaceSchema = z.object({
-  name: spaceNameSchema
-});
 
 export function AddSpaceDialog(props: StandardDialogExtProps) {
   const [isOpen, setIsOpen] = useState(true);
@@ -34,7 +18,6 @@ export function AddSpaceDialog(props: StandardDialogExtProps) {
   const { mutate: createSpace, isPending } = api.space.create.useMutation({
     onSuccess: () => {
       setIsOpen(false);
-      createSpaceForm.setValue('name', '');
       void utils.space.fetch.invalidate();
     },
     onError: error => {
@@ -42,17 +25,7 @@ export function AddSpaceDialog(props: StandardDialogExtProps) {
     }
   });
 
-  const createSpaceForm = useForm<z.infer<typeof createSpaceSchema>>({
-    resolver: zodResolver(createSpaceSchema),
-    defaultValues: {
-      name: ''
-    },
-    mode: 'onChange'
-  });
-
-  const submitHandler: SubmitHandler<z.infer<typeof createSpaceSchema>> = ({
-    name
-  }) => {
+  const submitHandler: SubmitHandler<SpaceFormValues> = ({ name }) => {
     createSpace(name);
   };
 
@@ -64,35 +37,7 @@ export function AddSpaceDialog(props: StandardDialogExtProps) {
       {...props}
     >
       {!isPending ? (
-        <Form {...createSpaceForm}>
-          <form
-            className='flex flex-col gap-8'
-            onSubmit={createSpaceForm.handleSubmit(submitHandler)}
-          >
-            <FormField
-              control={createSpaceForm.control}
-              name='name'
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder='Name' {...field} />
-                  </FormControl>
-                  <FormMessage className='dark:text-red-600' />
-                </FormItem>
-              )}
-            />
-            <DialogFooter>
-              <div className='flex justify-between'>
-                <DialogClose asChild>
-                  <Button type='button' variant='secondary'>
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <Button>Save</Button>
-              </div>
-            </DialogFooter>
-          </form>
-        </Form>
+        <SpaceForm defaultValues={{ name: '' }} submitHandler={submitHandler} />
       ) : (
         <div className='flex h-full w-full items-center justify-center'>
           <Spinner className='h-20 w-20' />
