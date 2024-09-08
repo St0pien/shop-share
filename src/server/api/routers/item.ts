@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { and, countDistinct, eq } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
+import { check } from 'prettier';
 
 import {
   categoryIdAssignmentSchema,
@@ -38,17 +39,15 @@ export const itemRouter = createTRPCRouter({
       checkSpaceAccess(access, 'member');
 
       if (input.categoryId !== undefined) {
-        const [chosenCategory] = await ctx.db
-          .select({ id: categories.id })
-          .from(categories)
-          .where(
-            and(
-              eq(categories.spaceId, input.spaceId),
-              eq(categories.id, input.categoryId)
-            )
-          );
+        const categoryAccess = await getCategoryAccess({
+          db: ctx.db,
+          userId: ctx.session.user.id,
+          categoryId: input.categoryId
+        });
 
-        if (chosenCategory === undefined) {
+        checkCategoryAccess(categoryAccess, 'member');
+
+        if (categoryAccess.spaceId !== input.spaceId) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: ErrorMessage.CATEGORY_NOT_FOUND
@@ -181,6 +180,13 @@ export const itemRouter = createTRPCRouter({
         });
 
         checkCategoryAccess(categoryAccess, 'member');
+
+        if (categoryAccess.spaceId !== itemAccess.spaceId) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: ErrorMessage.CATEGORY_NOT_FOUND
+          });
+        }
       }
 
       await ctx.db

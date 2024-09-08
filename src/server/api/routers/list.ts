@@ -166,6 +166,13 @@ export const listRouter = createTRPCRouter({
       checkListAccess(listAccess, 'member');
       checkItemAccess(itemAccess, 'member');
 
+      if (listAccess.spaceId !== itemAccess.spaceId) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: ErrorMessage.ITEM_NOT_FOUND
+        });
+      }
+
       await ctx.db.insert(listItems).values({
         itemId: input.itemId,
         listId: input.listId

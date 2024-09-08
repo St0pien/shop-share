@@ -11,7 +11,6 @@ import { ThemeProvider } from './_components/ThemeProvider';
 
 // TODO: Create custom error page
 // TODO: Renaming spaces and lists
-// TODO: Navigation on shopping lists
 
 export const metadata: Metadata = {
   title: 'ShopShare',

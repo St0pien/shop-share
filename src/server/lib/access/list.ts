@@ -4,7 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import * as schema from '@/server/db/schema';
 import { ErrorMessage } from '@/lib/ErrorMessage';
 
-import { checkAccess } from '.';
+import { checkAccess, type Privelege } from '.';
 
 interface ListAccessParams {
   db: PostgresJsDatabase<typeof schema>;
@@ -12,17 +12,25 @@ interface ListAccessParams {
   listId: number;
 }
 
-export async function getListAccess({ db, userId, listId }: ListAccessParams) {
+export async function getListAccess({
+  db,
+  userId,
+  listId
+}: ListAccessParams): Promise<Privelege> {
   const selectAdminQuery = db
     .select({
-      userId: schema.spaces.admin
+      userId: schema.spaces.admin,
+      spaceId: schema.lists.spaceId
     })
     .from(schema.lists)
     .innerJoin(schema.spaces, eq(schema.lists.spaceId, schema.spaces.id))
     .where(eq(schema.lists.id, listId));
 
   const selectMemberQuery = db
-    .select({ userId: schema.spaceMembers.userId })
+    .select({
+      userId: schema.spaceMembers.userId,
+      spaceId: schema.lists.spaceId
+    })
     .from(schema.lists)
     .innerJoin(
       schema.spaceMembers,
@@ -37,7 +45,8 @@ export async function getListAccess({ db, userId, listId }: ListAccessParams) {
   return {
     exists: admin !== undefined,
     isMember: member?.userId === userId,
-    isAdmin: admin?.userId === userId
+    isAdmin: admin?.userId === userId,
+    spaceId: admin?.spaceId
   };
 }
 

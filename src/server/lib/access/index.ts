@@ -3,6 +3,7 @@ import { TRPCError } from '@trpc/server';
 import { type ErrorMessage } from '@/lib/ErrorMessage';
 
 export interface Privelege {
+  spaceId?: string;
   exists: boolean;
   isMember: boolean;
   isAdmin: boolean;
@@ -38,5 +39,3 @@ export function checkAccess(
     });
   }
 }
-
-// TODO: Fix assigning categories items etc from different spaces

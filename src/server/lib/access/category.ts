@@ -19,14 +19,18 @@ export async function getCategoryAccess({
 }: CategoryAccessParams): Promise<Privelege> {
   const selectAdminQuery = db
     .select({
-      userId: schema.spaces.admin
+      userId: schema.spaces.admin,
+      spaceId: schema.categories.spaceId
     })
     .from(schema.categories)
     .innerJoin(schema.spaces, eq(schema.categories.spaceId, schema.spaces.id))
     .where(eq(schema.categories.id, categoryId));
 
   const selectMemberQuery = db
-    .select({ userId: schema.spaceMembers.userId })
+    .select({
+      userId: schema.spaceMembers.userId,
+      spaceId: schema.categories.spaceId
+    })
     .from(schema.categories)
     .innerJoin(
       schema.spaceMembers,
@@ -44,7 +48,8 @@ export async function getCategoryAccess({
   return {
     exists: admin !== undefined,
     isMember: member?.userId === userId,
-    isAdmin: admin?.userId === userId
+    isAdmin: admin?.userId === userId,
+    spaceId: admin?.spaceId
   };
 }
 

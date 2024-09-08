@@ -41,7 +41,8 @@ export async function getSpaceAccess({
   return {
     exists: admin !== undefined,
     isMember: member?.userId === userId,
-    isAdmin: admin?.userId === userId
+    isAdmin: admin?.userId === userId,
+    spaceId: admin !== undefined ? spaceId : undefined
   };
 }
 
