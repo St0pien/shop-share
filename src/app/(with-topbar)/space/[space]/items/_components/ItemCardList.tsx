@@ -8,6 +8,7 @@ import { useProcessedRecords } from '@/lib/hooks/useProcessedRecords';
 import { standardOrdersByUrl } from '@/lib/order';
 import { groupItems } from '@/lib/groupItems';
 import { Separator } from '@/components/ui/separator';
+import { useScrollTopOnChange } from '@/lib/hooks/useScrollTopOnChange';
 
 import { ItemCard } from './ItemCard';
 
@@ -47,8 +48,13 @@ export function ItemCardList({ spaceId }: Props) {
         )
       : processedItems;
 
+  const scrollContainer = useScrollTopOnChange<HTMLDivElement>(filteredItems);
+
   return (
-    <div className='flex w-full flex-col items-center gap-4'>
+    <div
+      ref={scrollContainer}
+      className='flex w-full flex-col items-center gap-4'
+    >
       {filteredItems.length === 0 && (
         <p className='text-xl text-neutral-light'>No items found</p>
       )}

@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { api } from '@/trpc/react';
 import { standardOrdersByUrl } from '@/lib/order';
 import { useProcessedRecords } from '@/lib/hooks/useProcessedRecords';
+import { useScrollTopOnChange } from '@/lib/hooks/useScrollTopOnChange';
 
 import { CategoryCard } from './CategoryCard';
 
@@ -28,8 +29,14 @@ export function CategoryCardList({ spaceId }: Props) {
     orders: standardOrdersByUrl
   });
 
+  const scrollContainer =
+    useScrollTopOnChange<HTMLDivElement>(processedCategories);
+
   return (
-    <div className='flex w-full flex-col items-center gap-4'>
+    <div
+      ref={scrollContainer}
+      className='flex w-full flex-col items-center gap-4'
+    >
       {processedCategories.length === 0 && (
         <p className='text-xl text-neutral-light'>No categories found</p>
       )}

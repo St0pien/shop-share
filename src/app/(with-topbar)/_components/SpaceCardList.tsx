@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 import { api } from '@/trpc/react';
 import { standardOrdersByUrl } from '@/lib/order';
-import { useScrollTopOnChange } from '@/lib/hooks/scrollTop';
+import { useScrollTopOnChange } from '@/lib/hooks/useScrollTopOnChange';
 import { useProcessedRecords } from '@/lib/hooks/useProcessedRecords';
 
 import { SpaceCard } from './SpaceCard';
