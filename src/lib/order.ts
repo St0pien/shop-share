@@ -1,4 +1,9 @@
-import { type CategoryInfo, type ItemInfo, type SpaceInfo } from './types';
+import {
+  type CategoryInfo,
+  type ItemInfo,
+  type ListInfo,
+  type SpaceInfo
+} from './types';
 
 export interface Order<T> {
   url: string;
@@ -21,7 +26,9 @@ function getOrdersByUrl<T>(orders: Order<T>[]): OrdersByUrl<T> {
   );
 }
 
-export const standardOrders: Order<SpaceInfo | CategoryInfo | ItemInfo>[] = [
+export const standardOrders: Order<
+  SpaceInfo | CategoryInfo | ItemInfo | ListInfo
+>[] = [
   {
     url: 'a-z',
     display: 'A-Z',

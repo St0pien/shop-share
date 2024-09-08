@@ -28,7 +28,7 @@ const createSpaceSchema = z.object({
 });
 
 export function SpaceForm({ defaultValues, submitHandler }: Props) {
-  const createSpaceForm = useForm<z.infer<typeof createSpaceSchema>>({
+  const createSpaceForm = useForm<SpaceFormValues>({
     resolver: zodResolver(createSpaceSchema),
     defaultValues: defaultValues,
     mode: 'onChange'

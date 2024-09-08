@@ -30,7 +30,7 @@ const editItemSchema = z.object({
 });
 
 export function ItemForm({ defaultValues, submitHandler, spaceId }: Props) {
-  const editItemForm = useForm<z.infer<typeof editItemSchema>>({
+  const editItemForm = useForm<ItemFormValues>({
     resolver: zodResolver(editItemSchema),
     defaultValues,
     mode: 'onChange'

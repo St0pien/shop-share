@@ -4,48 +4,47 @@ import { z } from 'zod';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { DialogClose, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { listNameSchema } from '@/lib/schemas/list';
+
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { categoryNameSchema } from '@/lib/schemas/category';
+} from '../ui/form';
+import { Input } from '../ui/input';
+import { DialogClose, DialogFooter } from '../ui/dialog';
+import { Button } from '../ui/button';
 
-export type CategoryFormValues = z.infer<typeof editCategorySchema>;
+export type ListFormValues = z.infer<typeof editListSchema>;
 
 interface Props {
-  defaultValues: CategoryFormValues;
-  submitHandler?: SubmitHandler<CategoryFormValues>;
+  defaultValues: ListFormValues;
+  submitHandler?: SubmitHandler<ListFormValues>;
 }
 
-const editCategorySchema = z.object({
-  name: categoryNameSchema
+const editListSchema = z.object({
+  name: listNameSchema
 });
 
-export function CategoryForm({ defaultValues, submitHandler }: Props) {
-  const editCategoryForm = useForm<CategoryFormValues>({
-    resolver: zodResolver(editCategorySchema),
+export function ListForm({ defaultValues, submitHandler }: Props) {
+  const editListForm = useForm<ListFormValues>({
+    resolver: zodResolver(editListSchema),
     defaultValues,
     mode: 'onChange'
   });
 
   return (
-    <Form {...editCategoryForm}>
+    <Form {...editListForm}>
       <form
         className='flex flex-col gap-8'
         onSubmit={
-          submitHandler
-            ? editCategoryForm.handleSubmit(submitHandler)
-            : undefined
+          submitHandler ? editListForm.handleSubmit(submitHandler) : undefined
         }
       >
         <FormField
-          control={editCategoryForm.control}
+          control={editListForm.control}
           name='name'
           render={({ field }) => (
             <FormItem>

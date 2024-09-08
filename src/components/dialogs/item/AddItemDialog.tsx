@@ -27,7 +27,7 @@ export function AddItemDialog(props: StandardDialogExtProps) {
 
       const previousPart = previousItems ?? [];
       const lastID =
-        previousPart.length > 0 ? Math.max(...previousPart.map(c => c.id)) : 1;
+        previousPart.length > 0 ? Math.max(...previousPart.map(i => i.id)) : 1;
 
       const category = utils.category.fetch
         .getData(spaceId)

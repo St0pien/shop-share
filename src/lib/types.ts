@@ -27,3 +27,11 @@ export interface ItemInfo {
     name: string;
   };
 }
+
+export interface ListInfo {
+  id: number;
+  name: string;
+  createdAt: Date;
+  spaceId: string;
+  itemsQuantity: number;
+}
