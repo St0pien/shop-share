@@ -8,40 +8,32 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb';
-import { api } from '@/trpc/server';
+import { api, HydrateClient } from '@/trpc/server';
 
-interface SpaceNameProps {
-  spaceId: string;
-}
-
-async function SpaceName({ spaceId }: SpaceNameProps) {
-  const { spaceName } = await api.space.getName(spaceId);
-
-  if (spaceName.length > 23) {
-    return spaceName.slice(0, 20) + '...';
-  }
-
-  return spaceName;
-}
+import { SpaceName, type SpaceNameProps } from './SpaceName';
 
 export function SpaceBreadcrumb({ spaceId }: SpaceNameProps) {
+  void api.space.getName.prefetch(spaceId);
+
   return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link href='/' className='text-lg'>
-              Spaces
-            </Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator className='scale-[2]' />
-        <BreadcrumbItem className='text-lg text-primary'>
-          <Suspense fallback={<p className='animate-pulse'>...</p>}>
-            <SpaceName spaceId={spaceId} />
-          </Suspense>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
+    <HydrateClient>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href='/' className='text-lg'>
+                Spaces
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator className='scale-[2]' />
+          <BreadcrumbItem className='text-lg text-primary'>
+            <Suspense fallback={<p className='animate-pulse'>...</p>}>
+              <SpaceName spaceId={spaceId} />
+            </Suspense>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    </HydrateClient>
   );
 }

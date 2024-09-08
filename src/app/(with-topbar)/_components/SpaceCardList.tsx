@@ -16,8 +16,9 @@ export function SpaceCardList() {
   useEffect(() => {
     spaces.forEach(space => {
       utils.space.get.setData(space.id, space);
+      utils.space.getName.setData(space.id, { spaceName: space.name });
     });
-  }, [spaces, utils.space.get]);
+  }, [spaces, utils.space.get, utils.space.getName]);
 
   const processedSpaces = useProcessedRecords({
     data: spaces,

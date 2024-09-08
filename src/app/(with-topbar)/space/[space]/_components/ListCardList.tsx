@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import { api } from '@/trpc/react';
 import { useProcessedRecords } from '@/lib/hooks/useProcessedRecords';
 import { standardOrdersByUrl } from '@/lib/order';
@@ -14,13 +16,13 @@ interface Props {
 export function ListCardList({ spaceId }: Props) {
   const [lists] = api.list.fetch.useSuspenseQuery(spaceId);
 
-  // const utils = api.useUtils();
-  // useEffect(() => {
-  //   categories.forEach(category => {
-  //     utils.category.get.setData(category.id, category);
-  //   });
-  // }, [categories, utils.category.get]);
-  //
+  const utils = api.useUtils();
+  useEffect(() => {
+    lists.forEach(list => {
+      utils.list.get.setData(list.id, list);
+    });
+  }, [lists, utils.list.get]);
+
   const processedLists = useProcessedRecords({
     data: lists,
     orders: standardOrdersByUrl,
