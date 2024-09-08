@@ -121,7 +121,14 @@ export const itemRouter = createTRPCRouter({
         .where(eq(items.id, itemId))
         .groupBy(items.id, categories.id);
 
-      const { item, category, listQuantity } = row!;
+      if (row === undefined) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: ErrorMessage.ITEM_NOT_FOUND
+        });
+      }
+
+      const { item, category, listQuantity } = row;
 
       return {
         id: item.id,

@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { DeleteLink } from '@/components/buttons/DeleteLink';
 import { type ListInfo } from '@/lib/types';
+import { uuidTranslator } from '@/lib/uuidTranslator';
 
 interface Props {
   listInfo: ListInfo;
@@ -25,13 +26,15 @@ export function ListCard({ listInfo }: Props) {
         </div>
 
         <div className='z-10'>
-          <DeleteLink href={`/space/$space/lists/delete/${listInfo.id}`} />
+          <DeleteLink
+            href={`/space/${uuidTranslator.fromUUID(listInfo.spaceId)}/lists/delete/${listInfo.id}`}
+          />
         </div>
       </div>
 
       <Link
         className='absolute left-0 top-0 z-0 h-full w-full'
-        href={`/space/$space/items/edit/${listInfo.id}`}
+        href={`/space/${uuidTranslator.fromUUID(listInfo.spaceId)}/lists/edit/${listInfo.id}`}
       ></Link>
     </div>
   );

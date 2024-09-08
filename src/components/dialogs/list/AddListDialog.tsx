@@ -23,14 +23,14 @@ export default function AddListDialog(props: StandardDialogExtProps) {
 
   const { mutate: createList } = api.list.create.useMutation({
     onMutate: async ({ listName, spaceId }) => {
-      await utils.item.fetch.cancel(spaceId);
+      await utils.list.fetch.cancel(spaceId);
       const previousLists = utils.list.fetch.getData(spaceId);
 
       const previousPart = previousLists ?? [];
       const lastID =
         previousPart.length > 0 ? Math.max(...previousPart.map(l => l.id)) : 1;
 
-      utils.category.fetch.setData(spaceId, [
+      utils.list.fetch.setData(spaceId, [
         ...(previousLists ?? []),
         {
           id: lastID + 1,
