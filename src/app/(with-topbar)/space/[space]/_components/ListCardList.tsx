@@ -20,8 +20,9 @@ export function ListCardList({ spaceId }: Props) {
   useEffect(() => {
     lists.forEach(list => {
       utils.list.get.setData(list.id, list);
+      utils.list.getName.setData(list.id, list.name);
     });
-  }, [lists, utils.list.get]);
+  }, [lists, utils.list.get, utils.list.getName]);
 
   const processedLists = useProcessedRecords({
     data: lists,

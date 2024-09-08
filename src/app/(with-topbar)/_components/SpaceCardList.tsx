@@ -16,7 +16,7 @@ export function SpaceCardList() {
   useEffect(() => {
     spaces.forEach(space => {
       utils.space.get.setData(space.id, space);
-      utils.space.getName.setData(space.id, { spaceName: space.name });
+      utils.space.getName.setData(space.id, space.name);
     });
   }, [spaces, utils.space.get, utils.space.getName]);
 

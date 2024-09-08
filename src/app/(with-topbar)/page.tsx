@@ -29,7 +29,7 @@ export default async function HomePage() {
           <SpaceCardList />
         </Suspense>
       </div>
-      <div className='fixed bottom-32 right-8 z-20'>
+      <div className='fixed bottom-20 right-8 z-20'>
         <AddLink href='/add' prefetch />
       </div>
     </HydrateClient>

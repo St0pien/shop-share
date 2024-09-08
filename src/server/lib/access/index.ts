@@ -38,3 +38,5 @@ export function checkAccess(
     });
   }
 }
+
+// TODO: Fix assigning categories items etc from different spaces

@@ -34,7 +34,7 @@ export function ListCard({ listInfo }: Props) {
 
       <Link
         className='absolute left-0 top-0 z-0 h-full w-full'
-        href={`/space/${uuidTranslator.fromUUID(listInfo.spaceId)}/lists/edit/${listInfo.id}`}
+        href={`/list/${uuidTranslator.fromUUID(listInfo.spaceId)}/${listInfo.id}`}
       ></Link>
     </div>
   );

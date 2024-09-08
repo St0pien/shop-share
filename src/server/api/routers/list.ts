@@ -1,13 +1,15 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { count, eq } from 'drizzle-orm';
+import { and, count, countDistinct, eq, notExists } from 'drizzle-orm';
 
 import { listIdSchema, listNameSchema } from '@/lib/schemas/list';
 import { spaceIdSchema } from '@/lib/schemas/space';
 import { checkSpaceAccess, getSpaceAccess } from '@/server/lib/access/space';
-import { listItems, lists } from '@/server/db/schema';
+import { categories, items, listItems, lists } from '@/server/db/schema';
 import { ErrorMessage } from '@/lib/ErrorMessage';
 import { checkListAccess, getListAccess } from '@/server/lib/access/list';
+import { itemIdSchema } from '@/lib/schemas/item';
+import { checkItemAccess, getItemAccess } from '@/server/lib/access/item';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -66,6 +68,32 @@ export const listRouter = createTRPCRouter({
         .groupBy(lists.id);
     }),
 
+  getName: protectedProcedure
+    .input(listIdSchema)
+    .query(async ({ ctx, input: listId }) => {
+      const access = await getListAccess({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        listId
+      });
+
+      checkListAccess(access, 'member');
+
+      const [row] = await ctx.db
+        .select({ listName: lists.name })
+        .from(lists)
+        .where(eq(lists.id, listId));
+
+      if (row === undefined) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: ErrorMessage.LIST_NOT_FOUND
+        });
+      }
+
+      return row.listName;
+    }),
+
   get: protectedProcedure
     .input(listIdSchema)
     .query(async ({ ctx, input: listId }) => {
@@ -112,5 +140,129 @@ export const listRouter = createTRPCRouter({
       checkListAccess(access, 'member');
 
       await ctx.db.delete(lists).where(eq(lists.id, listId));
+    }),
+
+  addItem: protectedProcedure
+    .input(
+      z.object({
+        listId: listIdSchema,
+        itemId: itemIdSchema
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [listAccess, itemAccess] = await Promise.all([
+        getListAccess({
+          db: ctx.db,
+          userId: ctx.session.user.id,
+          listId: input.listId
+        }),
+        getItemAccess({
+          db: ctx.db,
+          userId: ctx.session.user.id,
+          itemId: input.itemId
+        })
+      ]);
+
+      checkListAccess(listAccess, 'member');
+      checkItemAccess(itemAccess, 'member');
+
+      await ctx.db.insert(listItems).values({
+        itemId: input.itemId,
+        listId: input.listId
+      });
+    }),
+
+  fetchAssignedItems: protectedProcedure
+    .input(listIdSchema)
+    .query(async ({ ctx, input: listId }) => {
+      const access = await getListAccess({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        listId
+      });
+
+      checkListAccess(access, 'member');
+
+      const rows = await ctx.db
+        .select()
+        .from(listItems)
+        .innerJoin(lists, eq(listItems.listId, lists.id))
+        .innerJoin(items, eq(listItems.itemId, items.id))
+        .leftJoin(categories, eq(items.categoryId, categories.id))
+        .where(eq(listItems.listId, listId));
+
+      return rows.map(row => ({
+        spaceId: row.item.spaceId,
+        list: {
+          id: row.list.id,
+          name: row.list.name
+        },
+        item: {
+          id: row.item.id,
+          name: row.item.name
+        },
+        category: row.category
+          ? {
+              id: row.category.id,
+              name: row.category.name
+            }
+          : undefined
+      }));
+    }),
+
+  fetchUnassignedItems: protectedProcedure
+    .input(listIdSchema)
+    .query(async ({ ctx, input: listId }) => {
+      const access = await getListAccess({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        listId
+      });
+
+      checkListAccess(access, 'member');
+
+      const listItemsSubQuery = ctx.db
+        .select()
+        .from(listItems)
+        .where(
+          and(eq(listItems.itemId, items.id), eq(listItems.listId, listId))
+        );
+
+      const spaceIdCTE = ctx.db
+        .$with('spaceId')
+        .as(
+          ctx.db
+            .select({ spaceId: lists.spaceId })
+            .from(lists)
+            .where(eq(lists.id, listId))
+        );
+
+      const rows = await ctx.db
+        .select({
+          item: items,
+          category: categories,
+          listQuantity: countDistinct(listItems.listId)
+        })
+        .from(items)
+        .leftJoin(categories, eq(categories.id, items.categoryId))
+        .leftJoin(listItems, eq(listItems.itemId, items.id))
+        .where(
+          and(
+            notExists(listItemsSubQuery),
+            eq(items.spaceId, spaceIdCTE.spaceId)
+          )
+        )
+        .groupBy(items.id, categories.id);
+
+      return rows.map(({ item, category, listQuantity }) => ({
+        id: item.id,
+        name: item.name,
+        createdAt: item.createdAt,
+        spaceId: item.spaceId,
+        listQuantity,
+        category: category
+          ? { id: category.id, name: category.name }
+          : undefined
+      }));
     })
 });

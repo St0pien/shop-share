@@ -241,18 +241,18 @@ export const spaceRouter = createTRPCRouter({
 
       checkSpaceAccess(access, 'member');
 
-      const [spaceName] = await ctx.db
+      const [row] = await ctx.db
         .select({ spaceName: spaces.name })
         .from(spaces)
         .where(eq(spaces.id, spaceId));
 
-      if (spaceName === undefined) {
+      if (row === undefined) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: ErrorMessage.SPACE_NOT_FOUND
         });
       }
 
-      return spaceName;
+      return row.spaceName;
     })
 });

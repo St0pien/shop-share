@@ -35,3 +35,19 @@ export interface ListInfo {
   spaceId: string;
   itemsQuantity: number;
 }
+
+export interface ListItemInfo {
+  spaceId: string;
+  list: {
+    id: number;
+    name: string;
+  };
+  item: {
+    id: number;
+    name: string;
+  };
+  category?: {
+    id: number;
+    name: string;
+  };
+}

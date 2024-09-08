@@ -91,13 +91,17 @@ export const lists = createTable('list', {
 });
 
 export const listItems = createTable('list_item', {
-  listId: integer('list_id').references(() => lists.id, {
-    onDelete: 'cascade',
-    onUpdate: 'cascade'
-  }),
-  itemId: integer('item_id').references(() => items.id, {
-    onDelete: 'cascade',
-    onUpdate: 'cascade'
-  }),
+  listId: integer('list_id')
+    .references(() => lists.id, {
+      onDelete: 'cascade',
+      onUpdate: 'cascade'
+    })
+    .notNull(),
+  itemId: integer('item_id')
+    .references(() => items.id, {
+      onDelete: 'cascade',
+      onUpdate: 'cascade'
+    })
+    .notNull(),
   checked: boolean('checked').notNull().default(false)
 });
