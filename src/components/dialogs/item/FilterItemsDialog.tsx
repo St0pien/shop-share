@@ -1,10 +1,9 @@
 'use client';
 
-import { useParams, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
 import { CategoryFilter } from '@/components/filtering/CategoryFilter';
-import { uuidTranslator } from '@/lib/uuidTranslator';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useStringUrlReflection } from '@/lib/hooks/useUrlReflection';
@@ -14,11 +13,13 @@ import { type CategoryInfo } from '@/lib/types';
 
 import { StandardDialog } from '../StandardDialog';
 
-export function FilterItemsDialog() {
-  const [open, setOpen] = useState(true);
+interface Props {
+  baseUrl: string;
+  spaceId: string;
+}
 
-  const params = useParams<{ space: string }>();
-  const spaceId = uuidTranslator.toUUID(params.space);
+export function FilterItemsDialog({ baseUrl, spaceId }: Props) {
+  const [open, setOpen] = useState(true);
 
   const [filters, setFilters] = useStringUrlReflection('categories');
 
@@ -40,12 +41,10 @@ export function FilterItemsDialog() {
 
   const searchParams = useSearchParams();
 
-  const [url, setUrl] = useState(
-    `/space/${params.space}/items?${searchParams.toString()}`
-  );
+  const [url, setUrl] = useState(`${baseUrl}?${searchParams.toString()}`);
 
   const apply = () => {
-    setUrl(`/space/${params.space}/items?${searchParams.toString()}`);
+    setUrl(`${baseUrl}?${searchParams.toString()}`);
     setOpen(false);
   };
 
@@ -53,7 +52,7 @@ export function FilterItemsDialog() {
     const newParams = new URLSearchParams(searchParams);
     newParams.delete('categories');
 
-    setUrl(`/space/${params.space}/items?${newParams.toString()}`);
+    setUrl(`${baseUrl}?${newParams.toString()}`);
     setOpen(false);
   };
 

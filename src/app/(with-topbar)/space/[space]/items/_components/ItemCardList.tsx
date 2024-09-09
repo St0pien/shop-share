@@ -1,6 +1,5 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { api } from '@/trpc/react';
@@ -9,6 +8,8 @@ import { standardOrdersByUrl } from '@/lib/order';
 import { groupItems } from '@/lib/groupItems';
 import { Separator } from '@/components/ui/separator';
 import { useScrollTopOnChange } from '@/lib/hooks/useScrollTopOnChange';
+import { useCategoryFilter } from '@/lib/hooks/useCategoryFilter';
+import { useGroupingEnabled } from '@/lib/hooks/useGrouping';
 
 import { ItemCard } from './ItemCard';
 
@@ -33,20 +34,9 @@ export function ItemCardList({ spaceId }: Props) {
     orders: standardOrdersByUrl
   });
 
-  const searchParams = useSearchParams();
-  const groupingEnabled = searchParams.get('grouping') !== 'disabled';
+  const filteredItems = useCategoryFilter(processedItems);
 
-  const categoriesParam = searchParams.get('categories');
-  const filteredCategoryIds = categoriesParam
-    ? categoriesParam.split(',').map(str => Number(str))
-    : [];
-
-  const filteredItems =
-    filteredCategoryIds.length > 0
-      ? processedItems.filter(
-          item => !!filteredCategoryIds.find(id => item.category?.id === id)
-        )
-      : processedItems;
+  const groupingEnabled = useGroupingEnabled();
 
   const scrollContainer = useScrollTopOnChange<HTMLDivElement>(filteredItems);
 

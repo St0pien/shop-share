@@ -1,5 +1,13 @@
 import { FilterItemsDialog } from '@/components/dialogs/item/FilterItemsDialog';
+import { uuidTranslator } from '@/lib/uuidTranslator';
 
-export default function FiterItemsPage() {
-  return <FilterItemsDialog />;
+export default function FiterItemsPage({
+  params
+}: {
+  params: { space: string };
+}) {
+  const spaceId = uuidTranslator.toUUID(params.space);
+  const baseUrl = `/space/${params.space}/items`;
+
+  return <FilterItemsDialog spaceId={spaceId} baseUrl={baseUrl} />;
 }

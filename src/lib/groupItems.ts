@@ -1,5 +1,3 @@
-import { type ItemInfo } from './types';
-
 type Category =
   | undefined
   | {
@@ -7,15 +5,17 @@ type Category =
       name: string;
     };
 
-interface ItemCategoryGroup {
+interface ItemCategoryGroup<T extends { category: Category }> {
   category: Category;
 
-  items: ItemInfo[];
+  items: T[];
 }
 
-export function groupItems(items: ItemInfo[]): ItemCategoryGroup[] {
-  const categoryMap = new Map<number, ItemInfo[]>();
-  const uncategorized: ItemInfo[] = [];
+export function groupItems<T extends { category: Category }>(
+  items: T[]
+): ItemCategoryGroup<T>[] {
+  const categoryMap = new Map<number, T[]>();
+  const uncategorized: T[] = [];
 
   items.forEach(item => {
     if (item.category === undefined) {
@@ -30,7 +30,7 @@ export function groupItems(items: ItemInfo[]): ItemCategoryGroup[] {
     categoryMap.get(item.category.id)!.push(item);
   });
 
-  const result: ItemCategoryGroup[] = [...categoryMap.entries()].map(
+  const result: ItemCategoryGroup<T>[] = [...categoryMap.entries()].map(
     ([categoryId, items]) => ({
       category: {
         id: categoryId,

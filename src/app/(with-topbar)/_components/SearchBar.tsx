@@ -62,6 +62,7 @@ export function SearchBar() {
         icon={<SearchIcon className='text-primary' />}
         value={searchText}
         onChange={handleSearch}
+        tabIndex={0}
       />
       {searchText !== '' && (
         <X

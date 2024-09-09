@@ -1,7 +1,6 @@
 import { z } from 'zod';
-import { and, countDistinct, eq } from 'drizzle-orm';
+import { countDistinct, eq } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
-import { check } from 'prettier';
 
 import {
   categoryIdAssignmentSchema,

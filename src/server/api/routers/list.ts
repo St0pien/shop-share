@@ -200,6 +200,8 @@ export const listRouter = createTRPCRouter({
 
       return rows.map(row => ({
         spaceId: row.item.spaceId,
+        checked: row.list_item.checked,
+        createdAt: row.list_item.createdAt,
         list: {
           id: row.list.id,
           name: row.list.name
@@ -235,14 +237,11 @@ export const listRouter = createTRPCRouter({
           and(eq(listItems.itemId, items.id), eq(listItems.listId, listId))
         );
 
-      const spaceIdCTE = ctx.db
-        .$with('spaceId')
-        .as(
-          ctx.db
-            .select({ spaceId: lists.spaceId })
-            .from(lists)
-            .where(eq(lists.id, listId))
-        );
+      const spaceIdSubquery = ctx.db
+        .select({ spaceId: lists.spaceId })
+        .from(lists)
+        .where(eq(lists.id, listId))
+        .as('spaceId');
 
       const rows = await ctx.db
         .select({
@@ -253,12 +252,8 @@ export const listRouter = createTRPCRouter({
         .from(items)
         .leftJoin(categories, eq(categories.id, items.categoryId))
         .leftJoin(listItems, eq(listItems.itemId, items.id))
-        .where(
-          and(
-            notExists(listItemsSubQuery),
-            eq(items.spaceId, spaceIdCTE.spaceId)
-          )
-        )
+        .innerJoin(spaceIdSubquery, eq(spaceIdSubquery.spaceId, items.spaceId))
+        .where(notExists(listItemsSubQuery))
         .groupBy(items.id, categories.id);
 
       return rows.map(({ item, category, listQuantity }) => ({
@@ -271,5 +266,41 @@ export const listRouter = createTRPCRouter({
           ? { id: category.id, name: category.name }
           : undefined
       }));
+    }),
+
+  removeItem: protectedProcedure
+    .input(z.object({ itemId: itemIdSchema, listId: listIdSchema }))
+    .mutation(async ({ ctx, input }) => {
+      const [itemAccess, listAccess] = await Promise.all([
+        getItemAccess({
+          db: ctx.db,
+          userId: ctx.session.user.id,
+          itemId: input.itemId
+        }),
+        getListAccess({
+          db: ctx.db,
+          userId: ctx.session.user.id,
+          listId: input.listId
+        })
+      ]);
+
+      checkItemAccess(itemAccess, 'member');
+      checkListAccess(listAccess, 'member');
+
+      if (itemAccess.spaceId !== listAccess.spaceId) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: ErrorMessage.ITEM_NOT_FOUND
+        });
+      }
+
+      await ctx.db
+        .delete(listItems)
+        .where(
+          and(
+            eq(listItems.itemId, input.itemId),
+            eq(listItems.listId, input.listId)
+          )
+        );
     })
 });

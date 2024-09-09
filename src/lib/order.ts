@@ -2,6 +2,7 @@ import {
   type CategoryInfo,
   type ItemInfo,
   type ListInfo,
+  type ListItemInfo,
   type SpaceInfo
 } from './types';
 
@@ -52,3 +53,28 @@ export const standardOrders: Order<
 ];
 
 export const standardOrdersByUrl = getOrdersByUrl(standardOrders);
+
+export const listItemOrders: Order<ListItemInfo>[] = [
+  {
+    url: 'a-z',
+    display: 'A-Z',
+    comparator: (a, b) => a.item.name.localeCompare(b.item.name)
+  },
+  {
+    url: 'z-a',
+    display: 'Z-A',
+    comparator: (a, b) => b.item.name.localeCompare(a.item.name)
+  },
+  {
+    url: '',
+    display: 'Latest',
+    comparator: (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+  },
+  {
+    url: 'oldest',
+    display: 'Oldest',
+    comparator: (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+  }
+];
+
+export const listItemOrdersByUrl = getOrdersByUrl(listItemOrders);

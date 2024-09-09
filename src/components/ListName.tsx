@@ -7,8 +7,7 @@ export interface ListNameProps {
 }
 
 export function ListName({ listId }: ListNameProps) {
-  // const [listName] = api.list.getName.useSuspenseQuery(listId);
-  const listName = 'lskdflskdflskdflskdflskdflksdflsdkflskdflsdkdlsf';
+  const [listName] = api.list.getName.useSuspenseQuery(listId);
 
   if (listName.length > 23) {
     return listName.slice(0, 20) + '...';

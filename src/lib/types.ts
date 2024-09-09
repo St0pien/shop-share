@@ -38,6 +38,8 @@ export interface ListInfo {
 
 export interface ListItemInfo {
   spaceId: string;
+  checked: boolean;
+  createdAt: Date;
   list: {
     id: number;
     name: string;

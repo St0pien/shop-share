@@ -2,8 +2,7 @@ import { ListChecks } from 'lucide-react';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
-import { HydrateClient } from '@/trpc/server';
-import { uuidTranslator } from '@/lib/uuidTranslator';
+import { api, HydrateClient } from '@/trpc/server';
 import { Button } from '@/components/ui/button';
 import { WrappedSpinner } from '@/components/svg/Spinner';
 
@@ -14,8 +13,9 @@ export default function AddListItemPage({
 }: {
   params: { list: string; space: string };
 }) {
-  const spaceId = uuidTranslator.toUUID(params.space);
   const listId = Number(params.list);
+
+  void api.list.fetchUnassignedItems.prefetch(listId);
 
   return (
     <HydrateClient>
