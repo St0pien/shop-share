@@ -1,4 +1,4 @@
-import { FilterLink } from '@/components/buttons/FilterLink';
+import { UNSTABLE_FilterLink } from '../_components/UNSTABLE_FilterLink';
 
 export default function ListItemsFilter({
   params
@@ -7,5 +7,5 @@ export default function ListItemsFilter({
 }) {
   const href = `/list/${params.space}/${params.list}/add/filter`;
 
-  return <FilterLink href={href} prefetch />;
+  return <UNSTABLE_FilterLink href={href} />;
 }
