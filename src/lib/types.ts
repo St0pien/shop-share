@@ -53,3 +53,10 @@ export interface ListItemInfo {
     name: string;
   };
 }
+
+export interface UserInfo {
+  id: string;
+  name: string | null;
+  email: string;
+  image: string | null;
+}

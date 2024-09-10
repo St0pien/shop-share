@@ -7,5 +7,6 @@ export enum ErrorMessage {
   ACCESS_DENIED_ADMIN = 'You have no adminstrative access to this resource',
   DATABASE_ERROR = 'Failed to execute operation in database',
   INVALID_INVITATION = 'Invalid invitation token',
-  ALREADY_A_MEMBER = 'You are already a member of this space'
+  ALREADY_A_MEMBER = 'You are already a member of this space',
+  SELF_KICKOUT = "You can't kick out yourself"
 }

@@ -23,8 +23,8 @@ const routes = [
     icon: LayoutGrid
   },
   {
-    path: '/manage',
-    title: 'Manage',
+    path: '/members',
+    title: 'Members',
     icon: Users
   }
 ];
