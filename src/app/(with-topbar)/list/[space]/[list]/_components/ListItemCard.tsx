@@ -3,6 +3,7 @@
 import { CheckSquare, Square, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
 import { type ListItemInfo } from '@/lib/types';
@@ -61,7 +62,10 @@ export function ListItemCard({ listItemInfo }: Props) {
   };
 
   return (
-    <div className='relative flex w-5/6 items-center justify-between rounded-full bg-neutral-dark px-4 py-2'>
+    <motion.div
+      layoutId={`list-item-${listItemInfo.item.id}`}
+      className='relative flex w-5/6 items-center justify-between rounded-full bg-neutral-dark px-4 py-2'
+    >
       {listItemInfo.checked ? (
         <CheckSquare className='shrink-0 text-neutral-light' />
       ) : (
@@ -93,6 +97,6 @@ export function ListItemCard({ listItemInfo }: Props) {
         onClick={handeClick}
         className='absolute left-0 top-0 z-0 h-full w-full'
       ></div>
-    </div>
+    </motion.div>
   );
 }

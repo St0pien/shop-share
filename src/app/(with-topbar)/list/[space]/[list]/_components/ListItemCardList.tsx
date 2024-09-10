@@ -71,7 +71,7 @@ export function ListItemCardList({ listId }: Props) {
                   />
                 ))}
               </div>
-              {index !== arr.length - 1 && (
+              {(index !== arr.length - 1 || checkedItems.length > 0) && (
                 <Separator className='mx-auto mt-6 w-5/6' />
               )}
             </div>

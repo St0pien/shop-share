@@ -47,25 +47,26 @@ export function RemoveFromListDialog({
       ]);
 
       const previousCategories = utils.category.fetchWithinList.getData(listId);
-      const previousCategoriesArr = previousCategories ?? [];
 
-      if (item.category !== undefined) {
-        const index = previousCategoriesArr.findIndex(
-          c => c.id === item.category!.id
+      if (previousCategories !== undefined) {
+        const index = previousCategories.findIndex(
+          c => c.id === item.category?.id
         );
 
-        const optimisticCategories = [...previousCategoriesArr];
+        if (previousCategories[index] !== undefined) {
+          const optimisticCategories = [...previousCategories];
 
-        if (previousCategoriesArr[index]?.itemsQuantity === 1) {
-          optimisticCategories.splice(index, 1);
-        } else {
-          optimisticCategories[index] = {
-            ...previousCategoriesArr[index]!,
-            itemsQuantity: previousCategoriesArr[index]!.itemsQuantity - 1
-          };
+          if (previousCategories[index].itemsQuantity === 1) {
+            optimisticCategories.splice(index, 1);
+          } else {
+            optimisticCategories[index] = {
+              ...previousCategories[index],
+              itemsQuantity: previousCategories[index].itemsQuantity - 1
+            };
+          }
+
+          utils.category.fetchWithinList.setData(listId, optimisticCategories);
         }
-
-        utils.category.fetchWithinList.setData(listId, optimisticCategories);
       }
 
       return { previousAssigned, previousUnassigned, previousCategories };
@@ -85,9 +86,12 @@ export function RemoveFromListDialog({
     onError: (error, _, ctx) => {
       toast.error(error.message);
 
+      console.log('ctx', ctx);
+      console.log('hi mark');
       if (ctx !== undefined) {
         utils.list.fetchUnassignedItems.setData(listId, ctx.previousUnassigned);
         utils.list.fetchAssignedItems.setData(listId, ctx.previousAssigned);
+        console.log(ctx.previousAssigned);
         utils.category.fetchWithinList.setData(listId, ctx.previousCategories);
       }
     }

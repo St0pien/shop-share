@@ -2,6 +2,8 @@
 
 import { LayoutGrid, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 import { type ItemInfo } from '@/lib/types';
 import { api } from '@/trpc/react';
@@ -105,12 +107,37 @@ export function ItemAddCard({ itemInfo, listId }: Props) {
     }
   });
 
+  const [adding, setAdding] = useState(false);
+
   const handleClick = () => {
-    assignItem({ listId, itemId: itemInfo.id });
+    if (!adding) {
+      setAdding(true);
+    }
+  };
+
+  const parentVariants = {
+    idle: { opacity: 1 },
+    adding: { opacity: 0, x: -20 }
+  };
+
+  const childVariants = {
+    idle: { opacity: 0 },
+    adding: { opacity: 0.8 }
+  };
+
+  const endAdding = (animName: string) => {
+    if (animName === 'adding') {
+      assignItem({ listId, itemId: itemInfo.id });
+    }
   };
 
   return (
-    <div
+    <motion.div
+      layoutId={`item-add-${itemInfo.id}`}
+      animate={adding ? 'adding' : 'idle'}
+      variants={parentVariants}
+      transition={{ delay: 0.1 }}
+      onAnimationComplete={endAdding}
       className='relative flex w-5/6 flex-col justify-between rounded-lg bg-neutral-dark p-4'
       onClick={handleClick}
     >
@@ -128,6 +155,13 @@ export function ItemAddCard({ itemInfo, listId }: Props) {
 
         <Plus className='h-12 w-12 text-primary' />
       </div>
-    </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        variants={childVariants}
+        className='absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-lg bg-green-500'
+      >
+        <Plus className='h-16 w-16' />
+      </motion.div>
+    </motion.div>
   );
 }
