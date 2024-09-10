@@ -1,7 +1,5 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-
 import {
   Select,
   SelectContent,
@@ -13,6 +11,7 @@ import {
   type UrlValue,
   useMappedUrlReflection
 } from '@/lib/hooks/useUrlReflection';
+import { useSearchEnabled } from '@/lib/hooks/useSearchEnabled';
 
 interface Props {
   orderSelectItems: UrlValue<string>[];
@@ -24,8 +23,7 @@ export function OrderSelect({ orderSelectItems }: Props) {
     urlValueMap: orderSelectItems
   });
 
-  const searchParams = useSearchParams();
-  const disabled = searchParams.has('search');
+  const disabled = useSearchEnabled();
 
   return (
     <div className='flex w-full items-center gap-6'>

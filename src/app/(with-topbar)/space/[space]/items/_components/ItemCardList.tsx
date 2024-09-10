@@ -9,7 +9,8 @@ import { groupItems } from '@/lib/groupItems';
 import { Separator } from '@/components/ui/separator';
 import { useScrollTopOnChange } from '@/lib/hooks/useScrollTopOnChange';
 import { useCategoryFilter } from '@/lib/hooks/useCategoryFilter';
-import { useGroupingEnabled } from '@/lib/hooks/useGrouping';
+import { useGroupingEnabled } from '@/lib/hooks/useGroupingEnabled';
+import { useSearchEnabled } from '@/lib/hooks/useSearchEnabled';
 
 import { ItemCard } from './ItemCard';
 
@@ -40,6 +41,8 @@ export function ItemCardList({ spaceId }: Props) {
 
   const scrollContainer = useScrollTopOnChange<HTMLDivElement>(filteredItems);
 
+  const searchEnabled = useSearchEnabled();
+
   return (
     <div
       ref={scrollContainer}
@@ -49,7 +52,7 @@ export function ItemCardList({ spaceId }: Props) {
         <p className='text-xl text-neutral-light'>No items found</p>
       )}
 
-      {groupingEnabled
+      {groupingEnabled && !searchEnabled
         ? groupItems(filteredItems).map((group, index, arr) => (
             <div key={group.category?.id ?? -1} className='w-full py-2'>
               <h2 className='px-8 pb-2 text-xl font-bold text-neutral-light'>

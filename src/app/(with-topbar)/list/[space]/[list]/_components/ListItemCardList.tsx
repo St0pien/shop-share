@@ -7,9 +7,10 @@ import { Separator } from '@/components/ui/separator';
 import { useProcessedRecords } from '@/lib/hooks/useProcessedRecords';
 import { listItemOrdersByUrl } from '@/lib/order';
 import { useCategoryFilter } from '@/lib/hooks/useCategoryFilter';
-import { useGroupingEnabled } from '@/lib/hooks/useGrouping';
+import { useGroupingEnabled } from '@/lib/hooks/useGroupingEnabled';
 import { groupItems } from '@/lib/groupItems';
 import { useScrollTopOnChange } from '@/lib/hooks/useScrollTopOnChange';
+import { useSearchEnabled } from '@/lib/hooks/useSearchEnabled';
 
 import { ListItemCard } from './ListItemCard';
 
@@ -47,6 +48,8 @@ export function ListItemCardList({ listId }: Props) {
 
   const groupingEnabled = useGroupingEnabled();
 
+  const searchEnabled = useSearchEnabled();
+
   const scrollContainer = useScrollTopOnChange<HTMLDivElement>(filteredItems);
 
   return (
@@ -57,7 +60,7 @@ export function ListItemCardList({ listId }: Props) {
       {filteredItems.length === 0 && (
         <p className='text-xl text-neutral-light'>No items found</p>
       )}
-      {groupingEnabled
+      {groupingEnabled && !searchEnabled
         ? groupItems(uncheckedItems).map((group, index, arr) => (
             <div key={group.category?.id ?? -1} className='w-full py-2'>
               <h2 className='px-8 pb-2 text-xl font-bold text-neutral-light'>
@@ -80,7 +83,7 @@ export function ListItemCardList({ listId }: Props) {
             <ListItemCard key={listItem.item.id} listItemInfo={listItem} />
           ))}
 
-      {groupingEnabled
+      {groupingEnabled && !searchEnabled
         ? groupItems(checkedItems).map((group, index, arr) => (
             <div key={group.category?.id ?? -1} className='w-full py-2'>
               <h2 className='px-8 pb-2 text-xl font-bold text-neutral-light'>

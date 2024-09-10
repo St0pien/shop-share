@@ -4,10 +4,11 @@ import { api } from '@/trpc/react';
 import { useProcessedRecords } from '@/lib/hooks/useProcessedRecords';
 import { standardOrdersByUrl } from '@/lib/order';
 import { useCategoryFilter } from '@/lib/hooks/useCategoryFilter';
-import { useGroupingEnabled } from '@/lib/hooks/useGrouping';
+import { useGroupingEnabled } from '@/lib/hooks/useGroupingEnabled';
 import { useScrollTopOnChange } from '@/lib/hooks/useScrollTopOnChange';
 import { groupItems } from '@/lib/groupItems';
 import { Separator } from '@/components/ui/separator';
+import { useSearchEnabled } from '@/lib/hooks/useSearchEnabled';
 
 import { ItemAddCard } from './ItemAddCard';
 
@@ -28,6 +29,8 @@ export function ItemAddCardList({ listId }: Props) {
 
   const groupingEnabled = useGroupingEnabled();
 
+  const searchEnabled = useSearchEnabled();
+
   const scrollContainer = useScrollTopOnChange<HTMLDivElement>(filteredItems);
 
   return (
@@ -39,7 +42,7 @@ export function ItemAddCardList({ listId }: Props) {
         <p className='text-xl text-neutral-light'>No items found</p>
       )}
 
-      {groupingEnabled
+      {groupingEnabled && !searchEnabled
         ? groupItems(filteredItems).map((group, index, arr) => (
             <div key={group.category?.id ?? -1} className='w-full py-2'>
               <h2 className='px-8 pb-2 text-xl font-bold text-neutral-light'>
