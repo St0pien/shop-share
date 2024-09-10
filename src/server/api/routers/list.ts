@@ -302,5 +302,50 @@ export const listRouter = createTRPCRouter({
             eq(listItems.listId, input.listId)
           )
         );
+    }),
+
+  setItemCheck: protectedProcedure
+    .input(
+      z.object({
+        listId: listIdSchema,
+        itemId: itemIdSchema,
+        checked: z.boolean()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [itemAccess, listAccess] = await Promise.all([
+        getItemAccess({
+          db: ctx.db,
+          userId: ctx.session.user.id,
+          itemId: input.itemId
+        }),
+        getListAccess({
+          db: ctx.db,
+          userId: ctx.session.user.id,
+          listId: input.listId
+        })
+      ]);
+
+      checkItemAccess(itemAccess, 'member');
+      checkListAccess(listAccess, 'member');
+
+      if (itemAccess.spaceId !== listAccess.spaceId) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: ErrorMessage.ITEM_NOT_FOUND
+        });
+      }
+
+      await ctx.db
+        .update(listItems)
+        .set({
+          checked: input.checked
+        })
+        .where(
+          and(
+            eq(listItems.itemId, input.itemId),
+            eq(listItems.listId, input.listId)
+          )
+        );
     })
 });

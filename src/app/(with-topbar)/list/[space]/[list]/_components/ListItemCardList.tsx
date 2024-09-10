@@ -42,6 +42,9 @@ export function ListItemCardList({ listId }: Props) {
 
   const filteredItems = useCategoryFilter(processedItems);
 
+  const checkedItems = filteredItems.filter(i => i.checked);
+  const uncheckedItems = filteredItems.filter(i => !i.checked);
+
   const groupingEnabled = useGroupingEnabled();
 
   const scrollContainer = useScrollTopOnChange<HTMLDivElement>(filteredItems);
@@ -55,7 +58,7 @@ export function ListItemCardList({ listId }: Props) {
         <p className='text-xl text-neutral-light'>No items found</p>
       )}
       {groupingEnabled
-        ? groupItems(filteredItems).map((group, index, arr) => (
+        ? groupItems(uncheckedItems).map((group, index, arr) => (
             <div key={group.category?.id ?? -1} className='w-full py-2'>
               <h2 className='px-8 pb-2 text-xl font-bold text-neutral-light'>
                 {group.category?.name ?? 'No category'}
@@ -73,7 +76,30 @@ export function ListItemCardList({ listId }: Props) {
               )}
             </div>
           ))
-        : filteredItems.map(listItem => (
+        : uncheckedItems.map(listItem => (
+            <ListItemCard key={listItem.item.id} listItemInfo={listItem} />
+          ))}
+
+      {groupingEnabled
+        ? groupItems(checkedItems).map((group, index, arr) => (
+            <div key={group.category?.id ?? -1} className='w-full py-2'>
+              <h2 className='px-8 pb-2 text-xl font-bold text-neutral-light'>
+                {group.category?.name ?? 'No category'}
+              </h2>
+              <div className='flex w-full flex-col items-center gap-4'>
+                {group.items.map(listItem => (
+                  <ListItemCard
+                    key={listItem.item.id}
+                    listItemInfo={listItem}
+                  />
+                ))}
+              </div>
+              {index !== arr.length - 1 && (
+                <Separator className='mx-auto mt-6 w-5/6' />
+              )}
+            </div>
+          ))
+        : checkedItems.map(listItem => (
             <ListItemCard key={listItem.item.id} listItemInfo={listItem} />
           ))}
 
