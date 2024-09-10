@@ -11,7 +11,7 @@ import {
 import { api, HydrateClient } from '@/trpc/server';
 import { SpaceName, type SpaceNameProps } from '@/components/SpaceName';
 
-export function SpaceBreadcrumb({ spaceId }: SpaceNameProps) {
+export async function SpaceBreadcrumb({ spaceId }: SpaceNameProps) {
   void api.space.getName.prefetch(spaceId);
 
   return (

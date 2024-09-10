@@ -254,5 +254,29 @@ export const spaceRouter = createTRPCRouter({
       }
 
       return row.spaceName;
+    }),
+
+  setName: protectedProcedure
+    .input(
+      z.object({
+        spaceId: spaceIdSchema,
+        name: spaceNameSchema
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const access = await getSpaceAccess({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        spaceId: input.spaceId
+      });
+
+      checkSpaceAccess(access, 'admin');
+
+      await ctx.db
+        .update(spaces)
+        .set({
+          name: input.name
+        })
+        .where(eq(spaces.id, input.spaceId));
     })
 });

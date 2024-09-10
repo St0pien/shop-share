@@ -132,6 +132,30 @@ export const listRouter = createTRPCRouter({
       return row.listName;
     }),
 
+  setName: protectedProcedure
+    .input(
+      z.object({
+        listId: listIdSchema,
+        name: listNameSchema
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const access = await getListAccess({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        listId: input.listId
+      });
+
+      checkListAccess(access, 'member');
+
+      await ctx.db
+        .update(lists)
+        .set({
+          name: input.name
+        })
+        .where(eq(lists.id, input.listId));
+    }),
+
   get: protectedProcedure
     .input(listIdSchema)
     .query(async ({ ctx, input: listId }) => {

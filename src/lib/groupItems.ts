@@ -11,6 +11,8 @@ interface ItemCategoryGroup<T extends { category: Category }> {
   items: T[];
 }
 
+// TODO: Fix searchbar
+
 export function groupItems<T extends { category: Category }>(
   items: T[]
 ): ItemCategoryGroup<T>[] {
