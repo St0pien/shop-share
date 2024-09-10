@@ -68,6 +68,44 @@ export const listRouter = createTRPCRouter({
         .groupBy(lists.id);
     }),
 
+  fetchWithoutItem: protectedProcedure
+    .input(z.object({ spaceId: spaceIdSchema, itemId: itemIdSchema }))
+    .query(async ({ ctx, input }) => {
+      const access = await getSpaceAccess({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        spaceId: input.spaceId
+      });
+
+      checkSpaceAccess(access, 'member');
+
+      return ctx.db
+        .select({
+          id: lists.id,
+          name: lists.name,
+          createdAt: lists.createdAt,
+          spaceId: lists.spaceId,
+          itemsQuantity: count(listItems.itemId)
+        })
+        .from(lists)
+        .leftJoin(listItems, eq(listItems.listId, lists.id))
+        .where(eq(lists.spaceId, input.spaceId))
+        .groupBy(lists.id)
+        .having(
+          notExists(
+            ctx.db
+              .select()
+              .from(listItems)
+              .where(
+                and(
+                  eq(listItems.itemId, input.itemId),
+                  eq(listItems.listId, lists.id)
+                )
+              )
+          )
+        );
+    }),
+
   getName: protectedProcedure
     .input(listIdSchema)
     .query(async ({ ctx, input: listId }) => {

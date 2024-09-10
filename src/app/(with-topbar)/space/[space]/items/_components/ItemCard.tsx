@@ -4,6 +4,7 @@ import { LayoutGrid, ListChecks } from 'lucide-react';
 import { DeleteLink } from '@/components/buttons/DeleteLink';
 import { type ItemInfo } from '@/lib/types';
 import { uuidTranslator } from '@/lib/uuidTranslator';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   itemInfo: ItemInfo;
@@ -35,10 +36,15 @@ export function ItemCard({ itemInfo }: Props) {
           </p>
         </div>
 
-        <div className='z-10'>
+        <div className='z-10 flex flex-col gap-2'>
           <DeleteLink
             href={`/space/${spaceParam}/items/delete/${itemInfo.id}`}
           />
+          <Link href={`/space/${spaceParam}/items/assign/${itemInfo.id}`}>
+            <Button className='h-10 w-10 p-2'>
+              <ListChecks className='h-full w-full' />
+            </Button>
+          </Link>
         </div>
       </div>
 
