@@ -15,15 +15,24 @@ import { StandardDialog } from '../StandardDialog';
 
 interface Props {
   baseUrl: string;
-  spaceId: string;
+  spaceId?: string;
+  listId?: number;
 }
 
-export function FilterItemsDialog({ baseUrl, spaceId }: Props) {
+export function FilterItemsDialog({ baseUrl, spaceId, listId }: Props) {
   const [open, setOpen] = useState(true);
 
   const [filters, setFilters] = useStringUrlReflection('categories');
 
-  const { data: categories } = api.category.fetch.useQuery(spaceId);
+  if (spaceId === undefined && listId === undefined) {
+    throw new Error('spaceId and listId undefined');
+  }
+
+  const query =
+    spaceId !== undefined
+      ? api.category.fetch.useQuery(spaceId)
+      : api.category.fetchWithinList.useQuery(listId!);
+  const { data: categories } = query;
 
   const selectedIds = filters ? filters.split(',').map(str => Number(str)) : [];
 

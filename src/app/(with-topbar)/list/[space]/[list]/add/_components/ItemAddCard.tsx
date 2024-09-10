@@ -17,7 +17,8 @@ export function ItemAddCard({ itemInfo, listId }: Props) {
     onMutate: async () => {
       await Promise.all([
         utils.list.fetchUnassignedItems.cancel(listId),
-        utils.list.fetchAssignedItems.cancel(listId)
+        utils.list.fetchAssignedItems.cancel(listId),
+        utils.category.fetchWithinList.cancel(listId)
       ]);
 
       const previousAssigned = utils.list.fetchAssignedItems.getData(listId);
@@ -48,13 +49,50 @@ export function ItemAddCard({ itemInfo, listId }: Props) {
         previousUnassignedArr.filter(i => i.id !== itemInfo.id)
       );
 
-      return { previousAssigned, previousUnassigned };
+      const previousCategories = utils.category.fetchWithinList.getData(listId);
+      const previousCategoriesArr = previousCategories ?? [];
+
+      if (itemInfo.category !== undefined) {
+        const index = previousCategoriesArr.findIndex(
+          c => c.id === itemInfo.category!.id
+        );
+
+        const optimisticCategories = [...previousCategoriesArr];
+
+        if (index === -1) {
+          optimisticCategories.push({
+            id: itemInfo.category.id,
+            name: itemInfo.category.name,
+            spaceId: itemInfo.spaceId,
+            createdAt: new Date(),
+            itemsQuantity: 1
+          });
+        } else {
+          optimisticCategories[index] = {
+            id: itemInfo.category.id,
+            name: itemInfo.category.name,
+            spaceId: itemInfo.spaceId,
+            createdAt: new Date(),
+            itemsQuantity: previousCategoriesArr[index]!.itemsQuantity + 1
+          };
+        }
+
+        utils.category.fetchWithinList.setData(listId, optimisticCategories);
+      }
+
+      return { previousAssigned, previousUnassigned, previousCategories };
     },
     onSettled: async () => {
-      await Promise.all([
+      const invalidates = [
         utils.list.fetchUnassignedItems.invalidate(listId),
         utils.list.fetchAssignedItems.invalidate(listId)
-      ]);
+      ];
+
+      if (itemInfo.category !== undefined) {
+        invalidates.push(utils.category.fetchWithinList.invalidate(listId));
+      }
+
+      await Promise.all(invalidates);
     },
     onError: (error, _, ctx) => {
       toast.error(error.message);
@@ -62,6 +100,7 @@ export function ItemAddCard({ itemInfo, listId }: Props) {
       if (ctx !== undefined) {
         utils.list.fetchUnassignedItems.setData(listId, ctx.previousUnassigned);
         utils.list.fetchAssignedItems.setData(listId, ctx.previousAssigned);
+        utils.category.fetchWithinList.setData(listId, ctx.previousCategories);
       }
     }
   });

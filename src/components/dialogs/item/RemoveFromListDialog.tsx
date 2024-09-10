@@ -46,13 +46,41 @@ export function RemoveFromListDialog({
         item
       ]);
 
-      return { previousAssigned, previousUnassigned };
+      const previousCategories = utils.category.fetchWithinList.getData(listId);
+      const previousCategoriesArr = previousCategories ?? [];
+
+      if (item.category !== undefined) {
+        const index = previousCategoriesArr.findIndex(
+          c => c.id === item.category!.id
+        );
+
+        const optimisticCategories = [...previousCategoriesArr];
+
+        if (previousCategoriesArr[index]?.itemsQuantity === 1) {
+          optimisticCategories.splice(index, 1);
+        } else {
+          optimisticCategories[index] = {
+            ...previousCategoriesArr[index]!,
+            itemsQuantity: previousCategoriesArr[index]!.itemsQuantity - 1
+          };
+        }
+
+        utils.category.fetchWithinList.setData(listId, optimisticCategories);
+      }
+
+      return { previousAssigned, previousUnassigned, previousCategories };
     },
     onSettled: async () => {
-      await Promise.all([
+      const invalidates = [
         utils.list.fetchUnassignedItems.invalidate(listId),
         utils.list.fetchAssignedItems.invalidate(listId)
-      ]);
+      ];
+
+      if (item.category !== undefined) {
+        invalidates.push(utils.category.fetchWithinList.invalidate(listId));
+      }
+
+      await Promise.all(invalidates);
     },
     onError: (error, _, ctx) => {
       toast.error(error.message);
@@ -60,6 +88,7 @@ export function RemoveFromListDialog({
       if (ctx !== undefined) {
         utils.list.fetchUnassignedItems.setData(listId, ctx.previousUnassigned);
         utils.list.fetchAssignedItems.setData(listId, ctx.previousAssigned);
+        utils.category.fetchWithinList.setData(listId, ctx.previousCategories);
       }
     }
   });

@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { count, eq } from 'drizzle-orm';
 
-import { categories, items } from '@/server/db/schema';
+import { categories, items, listItems } from '@/server/db/schema';
 import { ErrorMessage } from '@/lib/ErrorMessage';
 import { checkSpaceAccess, getSpaceAccess } from '@/server/lib/access/space';
 import {
@@ -11,6 +11,8 @@ import {
 } from '@/server/lib/access/category';
 import { categoryIdSchema, categoryNameSchema } from '@/lib/schemas/category';
 import { spaceIdSchema } from '@/lib/schemas/space';
+import { listIdSchema } from '@/lib/schemas/list';
+import { checkListAccess, getListAccess } from '@/server/lib/access/list';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -72,6 +74,31 @@ export const categoryRouter = createTRPCRouter({
         .leftJoin(items, eq(items.categoryId, categories.id))
         .where(eq(categories.spaceId, spaceId))
         .groupBy(categories.id);
+    }),
+
+  fetchWithinList: protectedProcedure
+    .input(listIdSchema)
+    .query(async ({ ctx, input: listId }) => {
+      const access = await getListAccess({
+        db: ctx.db,
+        userId: ctx.session.user.id,
+        listId
+      });
+
+      checkListAccess(access, 'member');
+
+      return ctx.db
+        .select({
+          id: categories.id,
+          name: categories.name,
+          createdAt: categories.createdAt,
+          itemsQuantity: count(listItems.itemId),
+          spaceId: items.spaceId
+        })
+        .from(listItems)
+        .innerJoin(items, eq(listItems.itemId, items.id))
+        .innerJoin(categories, eq(items.categoryId, categories.id))
+        .groupBy(categories.id, items.spaceId);
     }),
 
   get: protectedProcedure
