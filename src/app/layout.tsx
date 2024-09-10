@@ -10,8 +10,6 @@ import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from './_components/ThemeProvider';
 
 // TODO: Create custom error page
-// TODO: User management
-// TODO: Animations
 
 export const metadata: Metadata = {
   title: 'ShopShare',

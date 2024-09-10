@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { LayoutGrid, ListChecks } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 import { DeleteLink } from '@/components/buttons/DeleteLink';
 import { type ItemInfo } from '@/lib/types';
@@ -14,7 +15,10 @@ export function ItemCard({ itemInfo }: Props) {
   const spaceParam = uuidTranslator.fromUUID(itemInfo.spaceId);
 
   return (
-    <div className='relative flex w-5/6 flex-col justify-between gap-2 rounded-lg bg-neutral-dark p-4'>
+    <motion.div
+      layoutId={`item-${itemInfo.id}`}
+      className='relative flex w-5/6 flex-col justify-between gap-2 rounded-lg bg-neutral-dark p-4'
+    >
       <h2 className='break-all text-2xl font-bold'>{itemInfo.name}</h2>
 
       <div className='flex justify-between'>
@@ -52,6 +56,6 @@ export function ItemCard({ itemInfo }: Props) {
         className='absolute left-0 top-0 z-0 h-full w-full'
         href={`/space/${spaceParam}/items/edit/${itemInfo.id}`}
       ></Link>
-    </div>
+    </motion.div>
   );
 }

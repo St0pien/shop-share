@@ -6,6 +6,7 @@ export interface SpaceInfo {
   itemsQuantity: number;
   categoriesQuantity: number;
   membersQuantity: number;
+  hasAdminRights: boolean;
 }
 
 export interface CategoryInfo {

@@ -1,5 +1,6 @@
 import { ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 import { type CategoryInfo } from '@/lib/types';
 import { DeleteLink } from '@/components/buttons/DeleteLink';
@@ -11,7 +12,10 @@ interface CategoryCardProps {
 
 export function CategoryCard({ categoryInfo }: CategoryCardProps) {
   return (
-    <div className='relative flex w-5/6 flex-col justify-between gap-2 rounded-lg bg-neutral-dark p-4'>
+    <motion.div
+      layoutId={`category-${categoryInfo.id}`}
+      className='relative flex w-5/6 flex-col justify-between gap-2 rounded-lg bg-neutral-dark p-4'
+    >
       <h2 className='break-all text-2xl font-bold'>{categoryInfo.name}</h2>
 
       <div className='flex justify-between'>
@@ -36,6 +40,6 @@ export function CategoryCard({ categoryInfo }: CategoryCardProps) {
         className='absolute left-0 top-0 z-0 h-full w-full'
         href={`/space/${uuidTranslator.fromUUID(categoryInfo.spaceId)}/categories/edit/${categoryInfo.id}`}
       ></Link>
-    </div>
+    </motion.div>
   );
 }

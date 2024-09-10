@@ -39,13 +39,15 @@ export function SpaceCard({ spaceInfo }: SpaceCardProps) {
             Created at {spaceInfo.createdAt.toLocaleDateString()}
           </p>
         </div>
-        <div className='z-10 flex h-full w-full flex-col items-center justify-end gap-4'>
-          <ShareSpaceDialog space={spaceInfo} />
-          <DeleteLink
-            href={`/delete/${uuidTranslator.fromUUID(spaceInfo.id)}`}
-            prefetch
-          />
-        </div>
+        {spaceInfo.hasAdminRights && (
+          <div className='z-10 flex h-full w-full flex-col items-center justify-end gap-4'>
+            <ShareSpaceDialog space={spaceInfo} />
+            <DeleteLink
+              href={`/delete/${uuidTranslator.fromUUID(spaceInfo.id)}`}
+              prefetch
+            />
+          </div>
+        )}
       </div>
       <Link
         href={`/space/${uuidTranslator.fromUUID(spaceInfo.id)}`}
